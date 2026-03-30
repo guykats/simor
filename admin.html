@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>פאנל ניהול – שש-בש</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="admin-body">
+
+  <!-- ===== LOGIN SCREEN ===== -->
+  <div id="loginScreen" class="login-screen">
+    <div class="login-card">
+      <h2 class="login-title">🔐 כניסה לניהול</h2>
+      <div class="mb-3">
+        <label class="form-label fw-semibold" for="tokenInput">GitHub Token</label>
+        <input
+          type="password"
+          id="tokenInput"
+          class="form-control"
+          placeholder="ghp_..."
+          onkeydown="if(event.key==='Enter') login()"
+        >
+        <div class="form-text">הטוקן שמשמש כסיסמת הכניסה. נשמר רק בזיכרון הדפדפן.</div>
+      </div>
+      <button id="loginBtn" onclick="login()" class="btn btn-primary w-100 py-2">כניסה</button>
+      <div id="loginError" class="alert alert-danger mt-3 mb-0" style="display:none"></div>
+    </div>
+  </div>
+
+  <!-- ===== MAIN PANEL ===== -->
+  <div id="mainPanel" style="display:none">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-dark bg-dark">
+      <div class="container-lg">
+        <span class="navbar-brand mb-0">🎲 ניהול שש-בש</span>
+        <div class="d-flex gap-2">
+          <a href="index.html" class="btn btn-sm btn-outline-light">← טבלת דירוג</a>
+          <button onclick="logout()" class="btn btn-sm btn-outline-danger">התנתק</button>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-lg py-4">
+
+      <!-- Tabs -->
+      <ul class="nav nav-tabs mb-4" id="adminTabs">
+        <li class="nav-item">
+          <button id="tab-players" class="nav-link active" onclick="showTab('players')">👤 שחקנים</button>
+        </li>
+        <li class="nav-item">
+          <button id="tab-matches" class="nav-link" onclick="showTab('matches')">🎮 תוצאות</button>
+        </li>
+      </ul>
+
+      <!-- ===== PLAYERS TAB ===== -->
+      <div id="playersTab">
+        <div class="row g-4">
+
+          <!-- Add/Edit player form -->
+          <div class="col-lg-4">
+            <div class="card shadow-sm">
+              <div class="card-header bg-white fw-bold" id="playerFormTitle">הוספת שחקן</div>
+              <div class="card-body">
+                <input type="hidden" id="editPlayerId">
+
+                <!-- Avatar -->
+                <div class="text-center mb-3">
+                  <div class="avatar-preview-wrap" id="avatarPreview"></div>
+                  <div class="d-flex justify-content-center gap-2">
+                    <label class="btn btn-sm btn-outline-secondary">
+                      📷 בחר תמונה
+                      <input
+                        type="file"
+                        id="avatarInput"
+                        accept="image/*"
+                        style="display:none"
+                        onchange="previewAvatar(this)"
+                      >
+                    </label>
+                    <button
+                      id="clearAvatarBtn"
+                      onclick="clearAvatar()"
+                      class="btn btn-sm btn-outline-danger"
+                      style="display:none"
+                    >הסר</button>
+                  </div>
+                </div>
+
+                <!-- Name -->
+                <div class="mb-3">
+                  <label class="form-label fw-semibold" for="playerName">שם שחקן</label>
+                  <input type="text" id="playerName" class="form-control" placeholder="שם מלא">
+                </div>
+
+                <div class="d-flex gap-2">
+                  <button onclick="savePlayer()" class="btn btn-primary flex-grow-1">שמור</button>
+                  <button
+                    id="cancelPlayerBtn"
+                    onclick="cancelPlayerEdit()"
+                    class="btn btn-outline-secondary"
+                    style="display:none"
+                  >ביטול</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Players list -->
+          <div class="col-lg-8">
+            <div id="playersList"></div>
+          </div>
+
+        </div>
+      </div><!-- /playersTab -->
+
+      <!-- ===== MATCHES TAB ===== -->
+      <div id="matchesTab" style="display:none">
+        <div class="row g-4">
+
+          <!-- Add/Edit match form -->
+          <div class="col-lg-4">
+            <div class="card shadow-sm">
+              <div class="card-header bg-white fw-bold" id="matchFormTitle">הוספת תוצאה</div>
+              <div class="card-body">
+                <input type="hidden" id="editMatchId">
+
+                <!-- Date -->
+                <div class="mb-3">
+                  <label class="form-label fw-semibold" for="matchDate">תאריך</label>
+                  <input type="date" id="matchDate" class="form-control">
+                </div>
+
+                <!-- Player 1 -->
+                <div class="mb-3">
+                  <label class="form-label fw-semibold" for="matchPlayer1">שחקן 1</label>
+                  <select id="matchPlayer1" class="form-select"></select>
+                </div>
+
+                <!-- Player 2 -->
+                <div class="mb-3">
+                  <label class="form-label fw-semibold" for="matchPlayer2">שחקן 2</label>
+                  <select id="matchPlayer2" class="form-select"></select>
+                </div>
+
+                <!-- Scores -->
+                <div class="mb-3">
+                  <label class="form-label fw-semibold">תוצאה</label>
+                  <div class="d-flex align-items-center gap-2">
+                    <input
+                      type="number"
+                      id="score1"
+                      class="form-control text-center"
+                      min="0"
+                      placeholder="0"
+                      style="max-width:80px"
+                    >
+                    <span class="fw-bold fs-4 text-muted">–</span>
+                    <input
+                      type="number"
+                      id="score2"
+                      class="form-control text-center"
+                      min="0"
+                      placeholder="0"
+                      style="max-width:80px"
+                    >
+                  </div>
+                  <div class="form-text">שחקן 1 מול שחקן 2 (לדוגמה: 5 – 3)</div>
+                </div>
+
+                <div id="matchError" class="alert alert-danger py-2" style="display:none"></div>
+
+                <div class="d-flex gap-2">
+                  <button onclick="saveMatch()" class="btn btn-primary flex-grow-1">שמור</button>
+                  <button
+                    id="cancelMatchBtn"
+                    onclick="cancelMatchEdit()"
+                    class="btn btn-outline-secondary"
+                    style="display:none"
+                  >ביטול</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Matches list -->
+          <div class="col-lg-8">
+            <div id="matchesList"></div>
+          </div>
+
+        </div>
+      </div><!-- /matchesTab -->
+
+    </div><!-- /container -->
+  </div><!-- /mainPanel -->
+
+  <!-- Save indicator -->
+  <div id="saveIndicator" class="save-indicator" style="display:none">
+    <span class="spinner-border spinner-border-sm"></span>
+    שומר...
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/github-api.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
