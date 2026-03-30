@@ -37,7 +37,15 @@
       "score1": 1,
       "score2": 4,
       "date": "2026-03-30"
+    },
+    {
+      "id": "mnds5fbzcevob",
+      "player1Id": "mndp68xb9xu58",
+      "player2Id": "mnds1wvewnmtp",
+      "score1": 4,
+      "score2": 2,
+      "date": "2026-03-30"
     }
   ],
-  "lastUpdated": "2026-03-30T22:46:22.643Z"
+  "lastUpdated": "2026-03-30T22:49:06.543Z"
 }
