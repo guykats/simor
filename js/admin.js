@@ -66,6 +66,13 @@ async function persist() {
   const indicator = document.getElementById('saveIndicator');
   indicator.style.display = 'block';
   try {
+    // Always fetch the latest SHA before saving to avoid stale-SHA conflicts
+    try {
+      const fresh = await fetchDataAdmin(token);
+      dataSha = fresh.sha;
+    } catch (_) {
+      // File doesn't exist yet (first save) — dataSha stays null
+    }
     dataSha = await saveData(token, appData, dataSha);
   } catch (e) {
     alert(`שגיאה בשמירה: ${e.message}`);
