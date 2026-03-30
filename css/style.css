@@ -66,6 +66,12 @@
    ============================================================ */
 body {
   background-color: var(--bg);
+  /* Wolf with red rose — AI-generated background image */
+  background-image: url('https://image.pollinations.ai/prompt/majestic%20howling%20wolf%20holding%20red%20rose%20in%20mouth%20dramatic%20dark%20night%20moonlight%20cinematic%20highly%20detailed%20realistic%20photography?width=1920&height=1080&nologo=true&seed=42');
+  background-size: cover;
+  background-position: center 30%;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
   color: var(--text);
   font-family: 'Rubik', 'Segoe UI', Arial, sans-serif;
   min-height: 100vh;
@@ -76,8 +82,19 @@ body {
    ATMOSPHERIC BACKGROUND
    ============================================================ */
 
-/* Moon halo behind the scene */
+/* Dark overlay so content stays readable over the wolf image */
 .atmo-moon {
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(80,0,20,0.55) 0%, transparent 65%),
+    linear-gradient(to bottom, rgba(5,3,8,0.55) 0%, rgba(5,3,8,0.80) 60%, rgba(5,3,8,0.92) 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Kept for back-compat but now unused moon halo — repurposed as second overlay layer */
+.atmo-moon-unused {
   position: fixed;
   top: -120px;
   left: 50%;
@@ -136,33 +153,6 @@ body {
 .wolf-header {
   text-align: center;
   padding: 2rem 1rem 1.5rem;
-}
-
-/* Moon + Wolf scene */
-.hero-scene {
-  position: relative;
-  display: inline-block;
-  margin-bottom: .5rem;
-}
-
-.hero-moon {
-  font-size: 5rem;
-  line-height: 1;
-  display: block;
-  animation: moonPulse 4s ease-in-out infinite;
-  filter: drop-shadow(0 0 30px rgba(255, 200, 60, 0.6));
-}
-
-.hero-wolf {
-  display: block;
-  width: 180px;
-  height: auto;
-  margin: -1.2rem auto 0;
-  color: #1a0808;
-  filter:
-    drop-shadow(0 4px 18px rgba(0,0,0,0.9))
-    drop-shadow(0 0 8px rgba(140, 0, 20, 0.4));
-  animation: wolfFloat 6s ease-in-out infinite;
 }
 
 /* Rose divider */
