@@ -72,24 +72,27 @@ function renderMatches(matches, players) {
     const p2 = players.find(p => p.id === m.player2Id) || { name: '?', id: m.player2Id };
     const p1Won = parseInt(m.score1) > parseInt(m.score2);
 
+    // In RTL layout, flexbox reverses: p1 block appears on RIGHT, p2 block on LEFT.
+    // p1 HTML order: [avatar][name][score] → RTL visual: [score][name][avatar]
+    //   score is on the inner side (closest to center dash) ✓
+    // p2 HTML order: [score][name][avatar] → RTL visual: [avatar][name][score]
+    //   score is on the inner side (closest to center dash) ✓
     return `
       <div class="match-card">
         <div class="match-row">
-          <div class="match-player ${p1Won ? 'match-winner' : 'match-loser'}">
-            ${getAvatarHtml(p1, 38)}
-            <span>${p1.name}</span>
-            ${p1Won ? '<span class="trophy">🏆</span>' : ''}
+          <div class="mp ${p1Won ? 'mp-win' : 'mp-lose'}">
+            ${getAvatarHtml(p1, 36)}
+            <span class="mp-name">${p1.name}${p1Won ? ' 🏆' : ''}</span>
+            <span class="mp-score ${p1Won ? 'score-win' : 'score-lose'}">${m.score1}</span>
           </div>
-          <div class="match-score-block">
-            <span class="score-num ${p1Won ? 'score-win' : 'score-lose'}">${m.score1}</span>
-            <span class="score-sep">-</span>
-            <span class="score-num ${!p1Won ? 'score-win' : 'score-lose'}">${m.score2}</span>
-            ${m.date ? `<div class="match-date">${formatDate(m.date)}</div>` : ''}
+          <div class="mc-sep">
+            <span>–</span>
+            ${m.date ? `<div class="mc-date">${formatDate(m.date)}</div>` : ''}
           </div>
-          <div class="match-player match-player-right ${!p1Won ? 'match-winner' : 'match-loser'}">
-            ${!p1Won ? '<span class="trophy">🏆</span>' : ''}
-            <span>${p2.name}</span>
-            ${getAvatarHtml(p2, 38)}
+          <div class="mp ${!p1Won ? 'mp-win' : 'mp-lose'}">
+            <span class="mp-score ${!p1Won ? 'score-win' : 'score-lose'}">${m.score2}</span>
+            <span class="mp-name">${!p1Won ? '🏆 ' : ''}${p2.name}</span>
+            ${getAvatarHtml(p2, 36)}
           </div>
         </div>
       </div>

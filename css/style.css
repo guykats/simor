@@ -159,11 +159,13 @@ body {
 .match-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 8px;
+  gap: 4px;
 }
 
-.match-player {
+/* Player block — each player shows [avatar][name][score] in HTML.
+   In RTL flex this renders as [score][name][avatar], so the score
+   is always on the inner side (adjacent to the center dash). */
+.mp {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -171,47 +173,45 @@ body {
   min-width: 0;
 }
 
-.match-player span {
-  font-size: 0.95rem;
+.mp-name {
+  font-size: 0.9rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  flex: 1;
+  min-width: 0;
 }
 
-.match-player-right {
-  flex-direction: row-reverse;
-  text-align: start;
+.mp-win .mp-name  { font-weight: 700; color: var(--text); }
+.mp-lose .mp-name { color: var(--muted); }
+
+.mp-score {
+  font-size: 1.9rem;
+  font-weight: 800;
+  line-height: 1;
+  flex-shrink: 0;
+  min-width: 28px;
+  text-align: center;
 }
 
-.match-winner span { font-weight: 700; color: var(--text); }
-.match-loser  span { color: var(--muted); }
-
-.trophy { font-size: 1rem; flex-shrink: 0; }
-
-.match-score-block {
+/* Center separator */
+.mc-sep {
   display: flex;
   flex-direction: column;
   align-items: center;
   flex-shrink: 0;
-  min-width: 80px;
-}
-
-.score-num {
-  font-size: 1.4rem;
-  font-weight: 800;
+  padding: 0 6px;
+  color: var(--muted);
+  font-size: 1.1rem;
+  font-weight: 700;
   line-height: 1;
 }
 
-.score-sep {
-  font-size: 1.4rem;
-  font-weight: 800;
+.mc-date {
+  font-size: 0.7rem;
   color: var(--muted);
-  margin: 0 4px;
-}
-
-.match-score-block > div:first-child {
-  display: flex;
-  align-items: center;
+  white-space: nowrap;
+  margin-top: 3px;
 }
 
 .score-win  { color: var(--success); }
