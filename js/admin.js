@@ -66,14 +66,31 @@ async function persist() {
   const indicator = document.getElementById('saveIndicator');
   indicator.style.display = 'block';
   try {
-    // Always fetch the latest SHA before saving to avoid stale-SHA conflicts
-    try {
-      const fresh = await fetchDataAdmin(token);
-      dataSha = fresh.sha;
-    } catch (_) {
-      // File doesn't exist yet (first save) — dataSha stays null
+    // Retry up to 3 times on SHA mismatch
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        // Always fetch the latest SHA before each attempt
+        try {
+          const fresh = await fetchDataAdmin(token);
+          dataSha = fresh.sha;
+        } catch (_) {
+          // File doesn't exist yet (first save) — dataSha stays null
+        }
+        dataSha = await saveData(token, appData, dataSha);
+        return; // success
+      } catch (e) {
+        const isShaConflict = e.message && (
+          e.message.includes('does not match') ||
+          e.message.includes('409') ||
+          e.message.includes('conflict')
+        );
+        if (isShaConflict && attempt < 3) {
+          await new Promise(r => setTimeout(r, 600 * attempt));
+          continue; // retry
+        }
+        throw e;
+      }
     }
-    dataSha = await saveData(token, appData, dataSha);
   } catch (e) {
     alert(`שגיאה בשמירה: ${e.message}`);
     throw e;

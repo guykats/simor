@@ -10,11 +10,13 @@ async function fetchData() {
 }
 
 async function fetchDataAdmin(token) {
-  const url = `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/${CONFIG.dataFile}`;
+  // Add timestamp to bypass any server-side caching
+  const url = `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/${CONFIG.dataFile}?t=${Date.now()}`;
   const res = await fetch(url, {
     headers: {
       'Authorization': `token ${token}`,
       'Accept': 'application/vnd.github.v3+json',
+      'Cache-Control': 'no-cache',
     }
   });
   if (!res.ok) {
