@@ -1,67 +1,260 @@
-/* ==============================
-   CSS Variables & Reset
-   ============================== */
+/* ============================================================
+   WOLF & ROSES THEME — Public Leaderboard
+   ============================================================ */
+
+/* --- Fonts & Variables --- */
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;600;800;900&display=swap');
+
 :root {
-  --bg:        #0d1117;
-  --surface:   #161b22;
-  --surface2:  #21262d;
-  --border:    #30363d;
-  --text:      #e6edf3;
-  --muted:     #8b949e;
-  --accent:    #58a6ff;
-  --gold:      #ffd700;
-  --silver:    #c0c0c0;
-  --bronze:    #cd7f32;
-  --success:   #3fb950;
-  --danger:    #f85149;
+  --bg:          #08060e;
+  --surface:     #120a12;
+  --surface2:    #1e0f1a;
+  --border:      #3a1828;
+  --border-glow: #7a1832;
+
+  --rose:        #d01030;
+  --rose-bright: #f0284a;
+  --rose-dark:   #8a0820;
+  --rose-glow:   rgba(208, 16, 48, 0.55);
+
+  --gold:        #d4a020;
+  --silver:      #a8b8cc;
+  --bronze:      #b86828;
+
+  --text:        #f4ede4;
+  --text-muted:  #9a8890;
+  --success:     #48d060;
+  --danger:      #f04858;
+
+  --moon-glow:   rgba(255, 220, 100, 0.18);
 }
 
-/* ==============================
-   PUBLIC PAGE
-   ============================== */
+/* --- Animations --- */
+@keyframes roseGlow {
+  0%, 100% { filter: drop-shadow(0 0 6px rgba(208,16,48,0.8)) drop-shadow(0 0 12px rgba(208,16,48,0.4)); }
+  50%       { filter: drop-shadow(0 0 14px rgba(255,40,80,1))  drop-shadow(0 0 28px rgba(208,16,48,0.7)); }
+}
 
+@keyframes moonPulse {
+  0%, 100% { opacity: .85; transform: scale(1);    filter: drop-shadow(0 0 30px rgba(255,220,80,0.5)); }
+  50%       { opacity: 1;   transform: scale(1.04); filter: drop-shadow(0 0 55px rgba(255,220,80,0.85)); }
+}
+
+@keyframes wolfFloat {
+  0%, 100% { transform: translateY(0);    }
+  50%       { transform: translateY(-7px); }
+}
+
+@keyframes titleShimmer {
+  0%, 100% { text-shadow: 0 0 18px rgba(208,16,48,0.6), 0 2px 4px rgba(0,0,0,0.9); }
+  50%       { text-shadow: 0 0 36px rgba(255,40,80,0.9), 0 0 70px rgba(208,16,48,0.5), 0 2px 4px rgba(0,0,0,0.9); }
+}
+
+@keyframes fogDrift {
+  0%   { transform: translateX(0); opacity: .4; }
+  50%  { transform: translateX(30px); opacity: .2; }
+  100% { transform: translateX(0); opacity: .4; }
+}
+
+@keyframes starTwinkle {
+  0%, 100% { opacity: .6; }
+  50%       { opacity: .15; }
+}
+
+/* ============================================================
+   GLOBAL — Public page base
+   ============================================================ */
 body {
   background-color: var(--bg);
   color: var(--text);
-  font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+  font-family: 'Rubik', 'Segoe UI', Arial, sans-serif;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
-/* Header */
-.page-header {
+/* ============================================================
+   ATMOSPHERIC BACKGROUND
+   ============================================================ */
+
+/* Moon halo behind the scene */
+.atmo-moon {
+  position: fixed;
+  top: -120px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center,
+    rgba(255, 200, 60, 0.14) 0%,
+    rgba(180, 60,  0, 0.10) 40%,
+    transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Low red fog */
+.atmo-fog {
+  position: fixed;
+  bottom: 0; left: -10%; right: -10%;
+  height: 260px;
+  background: linear-gradient(to top,
+    rgba(90, 0, 20, 0.32) 0%,
+    transparent 100%);
+  animation: fogDrift 12s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Subtle twinkling star dots */
+.atmo-stars {
+  position: fixed;
+  inset: 0;
+  background-image:
+    radial-gradient(1px 1px at  8%  12%, rgba(255,255,255,.55) 0%, transparent 100%),
+    radial-gradient(1px 1px at 22%   5%, rgba(255,255,255,.40) 0%, transparent 100%),
+    radial-gradient(1px 1px at 45%   9%, rgba(255,255,255,.60) 0%, transparent 100%),
+    radial-gradient(1px 1px at 67%   3%, rgba(255,255,255,.45) 0%, transparent 100%),
+    radial-gradient(1px 1px at 83%  14%, rgba(255,255,255,.50) 0%, transparent 100%),
+    radial-gradient(1px 1px at 93%   7%, rgba(255,255,255,.35) 0%, transparent 100%),
+    radial-gradient(1px 1px at 15%  28%, rgba(255,255,255,.30) 0%, transparent 100%),
+    radial-gradient(1px 1px at 55%  20%, rgba(255,255,255,.40) 0%, transparent 100%),
+    radial-gradient(1px 1px at 75%  25%, rgba(255,255,255,.35) 0%, transparent 100%);
+  animation: starTwinkle 4s ease-in-out infinite alternate;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.main-wrap {
+  position: relative;
+  z-index: 1;
+}
+
+/* ============================================================
+   HERO HEADER
+   ============================================================ */
+.wolf-header {
   text-align: center;
-  padding: 2.5rem 1rem 1.5rem;
+  padding: 2rem 1rem 1.5rem;
 }
 
-.page-title {
-  font-size: 2.2rem;
-  font-weight: 800;
+/* Moon + Wolf scene */
+.hero-scene {
+  position: relative;
+  display: inline-block;
+  margin-bottom: .5rem;
+}
+
+.hero-moon {
+  font-size: 5rem;
+  line-height: 1;
+  display: block;
+  animation: moonPulse 4s ease-in-out infinite;
+  filter: drop-shadow(0 0 30px rgba(255, 200, 60, 0.6));
+}
+
+.hero-wolf {
+  display: block;
+  width: 180px;
+  height: auto;
+  margin: -1.2rem auto 0;
+  color: #1a0808;
+  filter:
+    drop-shadow(0 4px 18px rgba(0,0,0,0.9))
+    drop-shadow(0 0 8px rgba(140, 0, 20, 0.4));
+  animation: wolfFloat 6s ease-in-out infinite;
+}
+
+/* Rose divider */
+.rose-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: .9rem auto;
+  max-width: 340px;
+}
+
+.rose-icon {
+  font-size: 1.5rem;
+  display: inline-block;
+  animation: roseGlow 2.5s ease-in-out infinite;
+}
+
+.rose-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--rose-dark), var(--rose), var(--rose-dark), transparent);
+  box-shadow: 0 0 6px var(--rose-glow);
+}
+
+/* Main title */
+.wolf-title {
+  font-size: clamp(1.9rem, 6vw, 3rem);
+  font-weight: 900;
   letter-spacing: -0.5px;
-  color: #fff;
+  background: linear-gradient(135deg, #f4ede4 30%, #e87888 60%, #f4ede4 85%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: titleShimmer 3.5s ease-in-out infinite;
+  margin: .3rem 0;
 }
 
-.page-subtitle {
-  color: var(--muted);
-  font-size: 0.9rem;
-  margin-top: 0.25rem;
+.wolf-subtitle {
+  color: var(--text-muted);
+  font-size: .85rem;
+  margin: 0;
 }
 
-/* Section title */
-.section-title {
-  font-size: 1.05rem;
+/* ============================================================
+   SECTION HEADERS
+   ============================================================ */
+.standings-card-header,
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: .5rem;
+}
+
+.standings-card-header {
+  padding: 12px 20px;
+  background: linear-gradient(135deg, var(--surface2), #2a101e);
   font-weight: 700;
-  color: var(--muted);
+  font-size: 1rem;
+  letter-spacing: 1px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 0.75rem;
+  color: var(--text);
+  border-bottom: 1px solid var(--border-glow);
 }
 
-/* Standings table */
+.section-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.rose-icon-sm {
+  font-size: 1rem;
+  animation: roseGlow 2.5s ease-in-out infinite;
+}
+
+/* ============================================================
+   STANDINGS TABLE
+   ============================================================ */
 .standings-card {
   background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
+  border: 1px solid var(--border-glow);
+  border-radius: 14px;
   overflow: hidden;
+  box-shadow:
+    0 0 0 1px var(--border),
+    0 8px 40px rgba(0,0,0,0.7),
+    0 0 60px rgba(120,0,30,0.12);
 }
 
 .standings-table {
@@ -71,22 +264,22 @@ body {
 }
 
 .standings-table thead tr {
-  background: var(--surface2);
+  background: linear-gradient(135deg, var(--surface2) 0%, #1e0818 100%);
 }
 
 .standings-table th {
-  padding: 10px 14px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--muted);
+  padding: 11px 14px;
+  font-size: .78rem;
+  font-weight: 700;
+  color: #c08898;
   text-transform: uppercase;
-  letter-spacing: 0.4px;
-  border-bottom: 1px solid var(--border);
+  letter-spacing: .5px;
+  border-bottom: 1px solid var(--border-glow);
   white-space: nowrap;
 }
 
 .standings-table td {
-  padding: 10px 14px;
+  padding: 11px 14px;
   border-bottom: 1px solid var(--border);
   vertical-align: middle;
 }
@@ -95,76 +288,96 @@ body {
   border-bottom: none;
 }
 
+.standings-table tbody tr {
+  transition: background .15s;
+}
 .standings-table tbody tr:hover td {
-  background: var(--surface2);
+  background: rgba(180, 20, 50, 0.08);
 }
 
-.row-gold td   { background: rgba(255, 215, 0, 0.07); }
-.row-silver td { background: rgba(192, 192, 192, 0.05); }
-.row-bronze td { background: rgba(205, 127, 50, 0.05); }
-.row-gold:hover td   { background: rgba(255, 215, 0, 0.12) !important; }
-.row-silver:hover td { background: rgba(192, 192, 192, 0.09) !important; }
-.row-bronze:hover td { background: rgba(205, 127, 50, 0.09) !important; }
+/* Rank rows */
+.row-gold   td { background: rgba(212,160,32,.10); border-right: 3px solid var(--gold); }
+.row-silver td { background: rgba(168,184,204,.07); border-right: 3px solid var(--silver); }
+.row-bronze td { background: rgba(184,104,40,.08); border-right: 3px solid var(--bronze); }
+.row-gold:hover   td { background: rgba(212,160,32,.16) !important; }
+.row-silver:hover td { background: rgba(168,184,204,.12) !important; }
+.row-bronze:hover td { background: rgba(184,104,40,.13) !important; }
 
-.rank-cell {
-  font-size: 1.2rem;
-  width: 48px;
-  text-align: center;
-}
-
-.player-cell {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.player-name {
-  font-weight: 600;
-}
+.rank-cell  { font-size: 1.3rem; width: 46px; text-align: center; }
+.player-cell { display: flex; align-items: center; gap: 10px; }
+.player-name { font-weight: 700; }
 
 .wins-cell   { color: var(--success); font-weight: 700; }
 .losses-cell { color: var(--danger); }
 
 .points-badge {
   display: inline-block;
-  background: var(--accent);
+  background: linear-gradient(135deg, var(--rose-dark), var(--rose));
   color: #fff;
-  font-weight: 700;
-  font-size: 0.95rem;
-  padding: 2px 10px;
+  font-weight: 800;
+  font-size: .95rem;
+  padding: 3px 12px;
   border-radius: 20px;
-  min-width: 36px;
+  min-width: 38px;
   text-align: center;
+  box-shadow: 0 0 12px rgba(208,16,48,.45);
 }
 
-.tiebreak-cell {
-  color: var(--muted);
-  font-size: 0.9rem;
-}
+.tiebreak-cell { color: var(--text-muted); font-size: .88rem; }
 
-/* Match cards */
+/* ============================================================
+   MATCH CARDS
+   ============================================================ */
 .match-card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 12px 16px;
-  margin-bottom: 8px;
-  transition: border-color 0.15s;
+  border-radius: 12px;
+  padding: 13px 16px;
+  margin-bottom: 10px;
+  transition: border-color .2s, box-shadow .2s;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Red rose petal accent on left/right corners */
+.match-card::before {
+  content: '🌹';
+  position: absolute;
+  top: 6px;
+  left: 10px;
+  font-size: .75rem;
+  opacity: .35;
+  filter: drop-shadow(0 0 4px var(--rose));
+  transition: opacity .2s;
+}
+.match-card::after {
+  content: '🌹';
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  font-size: .75rem;
+  opacity: .35;
+  filter: drop-shadow(0 0 4px var(--rose));
+  transition: opacity .2s;
 }
 
 .match-card:hover {
-  border-color: var(--accent);
+  border-color: var(--border-glow);
+  box-shadow: 0 0 20px rgba(120,0,30,0.25), 0 4px 16px rgba(0,0,0,0.5);
+}
+.match-card:hover::before,
+.match-card:hover::after {
+  opacity: .7;
 }
 
+/* Match row layout */
 .match-row {
   display: flex;
   align-items: center;
   gap: 4px;
 }
 
-/* Player block — each player shows [avatar][name][score] in HTML.
-   In RTL flex this renders as [score][name][avatar], so the score
-   is always on the inner side (adjacent to the center dash). */
+/* Player block */
 .mp {
   display: flex;
   align-items: center;
@@ -174,7 +387,7 @@ body {
 }
 
 .mp-name {
-  font-size: 0.9rem;
+  font-size: .9rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -182,17 +395,20 @@ body {
   min-width: 0;
 }
 
-.mp-win .mp-name  { font-weight: 700; color: var(--text); }
-.mp-lose .mp-name { color: var(--muted); }
+.mp-win .mp-name  { font-weight: 800; color: var(--text); }
+.mp-lose .mp-name { color: var(--text-muted); }
 
 .mp-score {
-  font-size: 1.9rem;
-  font-weight: 800;
+  font-size: 2rem;
+  font-weight: 900;
   line-height: 1;
   flex-shrink: 0;
-  min-width: 28px;
+  min-width: 30px;
   text-align: center;
 }
+
+.score-win  { color: var(--rose-bright); filter: drop-shadow(0 0 6px var(--rose)); }
+.score-lose { color: #503040; }
 
 /* Center separator */
 .mc-sep {
@@ -200,30 +416,42 @@ body {
   flex-direction: column;
   align-items: center;
   flex-shrink: 0;
-  padding: 0 6px;
-  color: var(--muted);
-  font-size: 1.1rem;
-  font-weight: 700;
+  padding: 0 8px;
+  color: var(--border-glow);
+  font-size: 1.2rem;
+  font-weight: 900;
   line-height: 1;
 }
 
 .mc-date {
-  font-size: 0.7rem;
-  color: var(--muted);
+  font-size: .7rem;
+  color: var(--text-muted);
   white-space: nowrap;
-  margin-top: 3px;
+  margin-top: 4px;
 }
 
-.score-win  { color: var(--success); }
-.score-lose { color: var(--muted); }
-
-.match-date {
-  font-size: 0.75rem;
-  color: var(--muted);
-  margin-top: 2px;
+/* ============================================================
+   LOADING / ERROR
+   ============================================================ */
+.wolf-loading {
+  text-align: center;
+  padding: 4rem 1rem;
+  color: var(--text-muted);
 }
 
-/* Admin link (floating) */
+.wolf-error {
+  background: rgba(208,16,48,.12);
+  border: 1px solid var(--rose-dark);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 1rem;
+  text-align: center;
+  margin-top: 2rem;
+}
+
+/* ============================================================
+   ADMIN FLOATING LINK
+   ============================================================ */
 .admin-link {
   position: fixed;
   bottom: 20px;
@@ -236,53 +464,34 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   text-decoration: none;
-  color: var(--muted);
-  opacity: 0.45;
-  transition: opacity 0.2s, border-color 0.2s;
+  color: var(--text-muted);
+  opacity: .4;
+  transition: opacity .2s, border-color .2s, box-shadow .2s;
   z-index: 100;
 }
-
 .admin-link:hover {
   opacity: 1;
-  border-color: var(--accent);
+  border-color: var(--rose);
+  box-shadow: 0 0 10px var(--rose-glow);
 }
 
-/* Loading spinner */
-#loading {
-  text-align: center;
-  padding: 4rem 1rem;
-  color: var(--muted);
-}
-
-/* Error */
-#error {
-  background: rgba(248, 81, 73, 0.1);
-  border: 1px solid var(--danger);
-  color: var(--text);
-  border-radius: 8px;
-  padding: 1rem;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-/* ==============================
-   ADMIN PAGE
-   ============================== */
-
+/* ============================================================
+   ADMIN PAGE  (light theme, not affected by dark vars)
+   ============================================================ */
 .admin-body {
   background: #f0f2f5;
   min-height: 100vh;
+  font-family: 'Rubik', 'Segoe UI', Arial, sans-serif;
 }
 
-/* Login screen */
 .login-screen {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+  background: linear-gradient(135deg, #0a0510 0%, #1a080e 100%);
 }
 
 .login-card {
@@ -291,18 +500,17 @@ body {
   padding: 2.5rem 2rem;
   width: 100%;
   max-width: 380px;
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 24px 64px rgba(0,0,0,.55);
 }
 
 .login-title {
   font-size: 1.5rem;
-  font-weight: 700;
+  font-weight: 800;
   text-align: center;
   margin-bottom: 1.75rem;
-  color: #1a1a2e;
+  color: #1a0810;
 }
 
-/* Avatar preview */
 .avatar-preview-wrap {
   width: 80px;
   height: 80px;
@@ -313,7 +521,7 @@ body {
   align-items: center;
   justify-content: center;
   border: 2px dashed #ced4da;
-  margin: 0 auto 0.75rem;
+  margin: 0 auto .75rem;
 }
 
 .avatar-preview-wrap img,
@@ -322,29 +530,32 @@ body {
   height: 80px !important;
 }
 
-/* Save indicator */
 .save-indicator {
   position: fixed;
   top: 16px;
   left: 50%;
   transform: translateX(-50%);
-  background: #0d6efd;
+  background: var(--rose, #d01030);
   color: #fff;
   padding: 7px 22px;
   border-radius: 20px;
-  font-size: 0.88rem;
+  font-size: .88rem;
   z-index: 9999;
-  box-shadow: 0 4px 16px rgba(13, 110, 253, 0.35);
+  box-shadow: 0 4px 16px rgba(208,16,48,.4);
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-/* Responsive */
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
 @media (max-width: 576px) {
-  .page-title { font-size: 1.6rem; }
+  .hero-wolf   { width: 130px; }
+  .hero-moon   { font-size: 3.6rem; }
+  .wolf-title  { font-size: 1.7rem; }
   .standings-table th,
-  .standings-table td { padding: 8px 8px; font-size: 0.85rem; }
-  .match-player span { font-size: 0.82rem; }
-  .score-num { font-size: 1.1rem; }
+  .standings-table td { padding: 8px 8px; font-size: .82rem; }
+  .mp-score    { font-size: 1.5rem; }
+  .mp-name     { font-size: .8rem; }
 }

@@ -4,61 +4,141 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>טבלת דירוג שש-בש</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;600;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-  <div class="container" style="max-width:760px">
+  <!-- Atmospheric background layers -->
+  <div class="atmo-moon"></div>
+  <div class="atmo-fog"></div>
+  <div class="atmo-stars"></div>
 
-    <!-- Header -->
-    <header class="page-header">
-      <div style="font-size:3rem;line-height:1">🎲</div>
-      <h1 class="page-title">טבלת דירוג שש-בש</h1>
-      <p class="page-subtitle" id="lastUpdated"></p>
-    </header>
+  <div class="main-wrap">
 
-    <!-- Loading -->
-    <div id="loading">
-      <div class="spinner-border text-secondary" role="status"></div>
-      <p class="mt-3">טוען נתונים...</p>
-    </div>
+    <!-- ===== HERO HEADER ===== -->
+    <header class="wolf-header">
 
-    <!-- Error -->
-    <div id="error" style="display:none">
-      לא ניתן לטעון נתונים. נסה לרענן את הדף.
-    </div>
+      <!-- Moon + Wolf scene -->
+      <div class="hero-scene">
+        <div class="hero-moon">🌕</div>
 
-    <!-- Content -->
-    <div id="content" style="display:none">
-
-      <!-- Standings -->
-      <div class="standings-card mb-5">
-        <table class="standings-table">
-          <thead>
-            <tr>
-              <th style="text-align:center">#</th>
-              <th>שחקן</th>
-              <th title="משחקים שוחקו">מ&quot;מ</th>
-              <th title="ניצחונות">נ׳</th>
-              <th title="הפסדים">ה׳</th>
-              <th title="נקודות (ניצחון=2, הפסד=1)">נקודות</th>
-              <th title="גיימים שהובקעו (מכריע בתיקו)">גיימים</th>
-            </tr>
-          </thead>
-          <tbody id="standingsBody"></tbody>
-        </table>
+        <!-- Wolf howling silhouette SVG -->
+        <svg class="hero-wolf" viewBox="0 0 200 230" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+          <!-- Body -->
+          <ellipse cx="95" cy="160" rx="58" ry="38"/>
+          <!-- Haunches -->
+          <ellipse cx="138" cy="155" rx="34" ry="37"/>
+          <!-- Chest -->
+          <ellipse cx="56" cy="150" rx="28" ry="33"/>
+          <!-- Shoulder hump -->
+          <ellipse cx="70" cy="128" rx="24" ry="22"/>
+          <!-- Neck -->
+          <path d="M 60 118 Q 64 100 70 88 Q 76 100 74 120 Z"/>
+          <!-- Head tilted back (howling) -->
+          <ellipse cx="72" cy="74" rx="18" ry="17" transform="rotate(-25 72 74)"/>
+          <!-- Muzzle pointing skyward -->
+          <ellipse cx="60" cy="53" rx="9" ry="20" transform="rotate(-28 60 53)"/>
+          <!-- Nose -->
+          <ellipse cx="51" cy="37" rx="5" ry="4"/>
+          <!-- Left ear -->
+          <polygon points="62,60 50,34 70,56"/>
+          <!-- Right ear -->
+          <polygon points="85,57 90,30 74,54"/>
+          <!-- Tail curving up dramatically -->
+          <path d="M 155 140 Q 180 118 182 90 Q 184 70 175 65 Q 167 62 167 76 Q 168 90 160 106 Q 153 120 148 134 Z"/>
+          <!-- Front left leg -->
+          <rect x="44" y="180" width="15" height="42" rx="6"/>
+          <!-- Front right leg -->
+          <rect x="72" y="182" width="15" height="40" rx="6"/>
+          <!-- Back leg -->
+          <rect x="122" y="182" width="15" height="38" rx="6"/>
+          <!-- Paws -->
+          <ellipse cx="51"  cy="224" rx="13" ry="5"/>
+          <ellipse cx="79"  cy="224" rx="13" ry="5"/>
+          <ellipse cx="129" cy="222" rx="13" ry="5"/>
+        </svg>
       </div>
 
-      <!-- Recent matches -->
-      <p class="section-title">תוצאות אחרונות</p>
-      <div id="matchesList"></div>
+      <!-- Rose divider top -->
+      <div class="rose-divider">
+        <span class="rose-icon">🌹</span>
+        <span class="rose-line"></span>
+        <span class="rose-icon">🌹</span>
+        <span class="rose-line"></span>
+        <span class="rose-icon">🌹</span>
+      </div>
+
+      <h1 class="wolf-title">טבלת דירוג שש-בש</h1>
+      <p class="wolf-subtitle" id="lastUpdated"></p>
+
+      <!-- Rose divider bottom -->
+      <div class="rose-divider">
+        <span class="rose-icon">🌹</span>
+        <span class="rose-line"></span>
+        <span class="rose-icon">🌹</span>
+        <span class="rose-line"></span>
+        <span class="rose-icon">🌹</span>
+      </div>
+
+    </header>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <div class="container pb-5" style="max-width:800px">
+
+      <!-- Loading -->
+      <div id="loading" class="wolf-loading">
+        <div class="spinner-border" style="color:var(--rose)" role="status"></div>
+        <p class="mt-3" style="color:var(--text-muted)">טוען נתונים...</p>
+      </div>
+
+      <!-- Error -->
+      <div id="error" class="wolf-error" style="display:none">
+        לא ניתן לטעון נתונים. נסה לרענן את הדף.
+      </div>
+
+      <!-- Content -->
+      <div id="content" style="display:none">
+
+        <!-- Standings table -->
+        <div class="standings-card mb-5">
+          <div class="standings-card-header">
+            <span class="rose-icon-sm">🌹</span>
+            <span>לוח הדירוג</span>
+            <span class="rose-icon-sm">🌹</span>
+          </div>
+          <table class="standings-table">
+            <thead>
+              <tr>
+                <th style="text-align:center">#</th>
+                <th>שחקן</th>
+                <th title="משחקים שוחקו">מ&quot;מ</th>
+                <th title="ניצחונות">נ׳</th>
+                <th title="הפסדים">ה׳</th>
+                <th title="נקודות (ניצחון=2, הפסד=1)">נקודות</th>
+                <th title="גיימים שהובקעו — מכריע בתיקו">גיימים</th>
+              </tr>
+            </thead>
+            <tbody id="standingsBody"></tbody>
+          </table>
+        </div>
+
+        <!-- Recent matches -->
+        <div class="section-header">
+          <span class="rose-icon-sm">🌹</span>
+          <span class="section-title">תוצאות אחרונות</span>
+          <span class="rose-icon-sm">🌹</span>
+        </div>
+        <div id="matchesList"></div>
+
+      </div>
 
     </div>
+  </div><!-- /main-wrap -->
 
-  </div><!-- /container -->
-
-  <!-- Subtle admin link -->
+  <!-- Admin link -->
   <a href="admin.html" class="admin-link" title="ניהול">⚙</a>
 
   <script src="js/config.js"></script>
