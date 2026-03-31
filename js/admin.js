@@ -382,25 +382,31 @@ function escapeHtml(str) {
     .replace(/"/g, '&quot;');
 }
 
-// Auto-login from session (bypass login screen if session token exists)
+// Auto-login from session — validates token first so expired tokens don't show empty panel
 window.addEventListener('load', async () => {
   const saved = sessionStorage.getItem('bgToken');
   if (!saved) return;
 
   try {
-    const result = await fetchDataAdmin(saved);
-    appData = result.data;
-    dataSha = result.sha;
-  } catch (e) {
-    appData = { players: [], matches: [], lastUpdated: null };
-    dataSha = null;
+    await validateToken(saved); // throws if token is invalid/expired
+    try {
+      const result = await fetchDataAdmin(saved);
+      appData = result.data;
+      dataSha = result.sha;
+    } catch (_) {
+      // data.json not found yet — empty state is OK
+      appData = { players: [], matches: [], lastUpdated: null };
+      dataSha = null;
+    }
+    token = saved;
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('mainPanel').style.display = 'block';
+    renderPlayersList();
+    renderMatchesList();
+    updatePlayerSelects();
+    setDefaultDate();
+  } catch (_) {
+    // Token expired or revoked — clear session, stay on login screen
+    sessionStorage.removeItem('bgToken');
   }
-
-  token = saved;
-  document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('mainPanel').style.display = 'block';
-  renderPlayersList();
-  renderMatchesList();
-  updatePlayerSelects();
-  setDefaultDate();
 });

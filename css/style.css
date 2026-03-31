@@ -1,5 +1,5 @@
 /* ============================================================
-   WOLF & ROSES THEME — Public Leaderboard  (BRIGHT / GLASS)
+   WOLF & ROSES THEME — Warm Atmospheric / Bright Glass
    ============================================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;600;800;900&display=swap');
@@ -15,49 +15,59 @@
   --bronze:      #d08840;
 
   --text:        #ffffff;
-  --text-soft:   rgba(255,255,255,0.90);
-  --text-muted:  rgba(255,255,255,0.60);
+  --text-soft:   rgba(255,255,255,0.95);
+  --text-muted:  rgba(255,255,255,0.65);
 
-  --glass:       rgba(255,255,255,0.14);
-  --glass-hover: rgba(255,255,255,0.22);
-  --glass-border:rgba(255,255,255,0.30);
-  --glass-header:rgba(255,255,255,0.20);
+  --glass:       rgba(20,5,12,0.45);
+  --glass-hover: rgba(20,5,12,0.55);
+  --glass-border:rgba(255,255,255,0.22);
+  --glass-header:rgba(255,255,255,0.12);
 
-  --success:     #50e870;
+  --success:     #60f080;
   --danger:      #ff5060;
 }
 
 /* --- Animations --- */
 @keyframes roseGlow {
-  0%, 100% { filter: drop-shadow(0 0 6px rgba(255,60,80,0.9)); }
-  50%       { filter: drop-shadow(0 0 16px rgba(255,60,80,1)) drop-shadow(0 0 30px rgba(232,16,46,0.6)); }
+  0%, 100% { filter: drop-shadow(0 0 5px rgba(255,60,80,0.8)); }
+  50%       { filter: drop-shadow(0 0 14px rgba(255,60,80,1)) drop-shadow(0 0 28px rgba(232,16,46,0.5)); }
 }
 
 @keyframes titleShimmer {
-  0%, 100% { text-shadow: 0 0 20px rgba(255,210,120,0.6), 0 2px 8px rgba(0,0,0,0.7); }
-  50%       { text-shadow: 0 0 40px rgba(255,180,60,1), 0 0 80px rgba(255,120,20,0.5), 0 2px 8px rgba(0,0,0,0.7); }
+  0%, 100% { text-shadow: 0 0 18px rgba(255,200,80,0.55),  0 2px 8px rgba(0,0,0,0.5); }
+  50%       { text-shadow: 0 0 36px rgba(255,170,40,1),    0 0 70px rgba(230,100,20,0.45), 0 2px 8px rgba(0,0,0,0.5); }
 }
 
 @keyframes fogDrift {
-  0%,100% { transform: translateX(0);    opacity: .25; }
-  50%      { transform: translateX(28px); opacity: .12; }
+  0%,100% { transform: translateX(0);    opacity: .18; }
+  50%      { transform: translateX(24px); opacity: .08; }
 }
 
 @keyframes starTwinkle {
-  0%, 100% { opacity: .8; }
-  50%       { opacity: .2; }
+  0%, 100% { opacity: .9; }
+  50%       { opacity: .3; }
+}
+
+@keyframes candleFlicker {
+  0%,100% { opacity: 1;    transform: scale(1); }
+  30%      { opacity: 0.85; transform: scale(0.98); }
+  60%      { opacity: 0.92; transform: scale(1.01); }
 }
 
 /* ============================================================
-   GLOBAL
+   GLOBAL — CSS-only warm atmospheric background
    ============================================================ */
 body {
-  background-color: #110800;
-  background-image: url('https://image.pollinations.ai/prompt/two%20majestic%20wolves%20playing%20backgammon%20at%20ornate%20tavern%20table%20warm%20golden%20candlelight%20glowing%20embers%20rich%20amber%20fantasy%20atmosphere%20dramatic%20cinematic%20lighting%20ultra%20detailed%20stunning%20digital%20art%208k?width=1920&height=1080&nologo=true&seed=557');
-  background-size: cover;
-  background-position: center center;
+  background-color: #1a0610;
+  /* Warm tavern atmosphere: amber candlelight + deep crimson + purple magic */
+  background-image:
+    radial-gradient(ellipse 65% 55% at 18% 65%,  rgba(210, 80, 10,  0.75) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 48% at 82% 38%,  rgba(180, 30, 50,  0.70) 0%, transparent 62%),
+    radial-gradient(ellipse 45% 35% at 50% 72%,  rgba(240, 110, 20, 0.35) 0%, transparent 52%),
+    radial-gradient(ellipse 75% 32% at 50%  3%,  rgba(110, 20, 70,  0.45) 0%, transparent 52%),
+    radial-gradient(ellipse 30% 28% at 65% 50%,  rgba(200, 50, 20,  0.30) 0%, transparent 45%),
+    linear-gradient(148deg, #380d1e 0%, #4a100f 22%, #2c0a0e 52%, #1a0812 78%, #100410 100%);
   background-attachment: fixed;
-  background-repeat: no-repeat;
   color: var(--text);
   font-family: 'Rubik', 'Segoe UI', Arial, sans-serif;
   min-height: 100vh;
@@ -68,24 +78,23 @@ body {
    ATMOSPHERIC LAYERS
    ============================================================ */
 
-/* Light overlay — just enough to keep text readable */
+/* Very subtle dark-to-transparent vignette only at edges */
 .atmo-moon {
   position: fixed;
   inset: 0;
   background:
-    radial-gradient(ellipse at 50% 0%,   rgba(180,80,0,0.22) 0%, transparent 55%),
-    linear-gradient(to bottom, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.45) 100%);
+    radial-gradient(ellipse 100% 100% at 50% 50%, transparent 55%, rgba(0,0,0,0.45) 100%);
   pointer-events: none;
   z-index: 0;
 }
 
-/* Bottom fog */
+/* Bottom warm fog */
 .atmo-fog {
   position: fixed;
   bottom: 0; left: -10%; right: -10%;
-  height: 220px;
-  background: linear-gradient(to top, rgba(80,0,20,0.22) 0%, transparent 100%);
-  animation: fogDrift 14s ease-in-out infinite;
+  height: 200px;
+  background: linear-gradient(to top, rgba(180,40,10,0.18) 0%, transparent 100%);
+  animation: fogDrift 16s ease-in-out infinite;
   pointer-events: none;
   z-index: 0;
 }
@@ -95,18 +104,41 @@ body {
   position: fixed;
   inset: 0;
   background-image:
-    radial-gradient(1px 1px at  8%  10%, rgba(255,255,255,.7) 0%, transparent 100%),
-    radial-gradient(1px 1px at 22%   4%, rgba(255,255,255,.5) 0%, transparent 100%),
-    radial-gradient(1px 1px at 45%   8%, rgba(255,255,255,.8) 0%, transparent 100%),
-    radial-gradient(1px 1px at 67%   3%, rgba(255,255,255,.6) 0%, transparent 100%),
-    radial-gradient(1px 1px at 83%  13%, rgba(255,255,255,.7) 0%, transparent 100%),
-    radial-gradient(1px 1px at 93%   6%, rgba(255,255,255,.5) 0%, transparent 100%),
-    radial-gradient(1px 1px at 15%  26%, rgba(255,255,255,.4) 0%, transparent 100%),
-    radial-gradient(1px 1px at 55%  18%, rgba(255,255,255,.6) 0%, transparent 100%),
-    radial-gradient(1px 1px at 75%  22%, rgba(255,255,255,.5) 0%, transparent 100%);
-  animation: starTwinkle 3.5s ease-in-out infinite alternate;
+    radial-gradient(1.5px 1.5px at  8%  10%, rgba(255,220,150,.85) 0%, transparent 100%),
+    radial-gradient(1px   1px   at 22%   4%, rgba(255,255,255,.65) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 45%   7%, rgba(255,255,255,.90) 0%, transparent 100%),
+    radial-gradient(1px   1px   at 67%   3%, rgba(255,220,150,.70) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 83%  13%, rgba(255,255,255,.80) 0%, transparent 100%),
+    radial-gradient(1px   1px   at 93%   6%, rgba(255,220,150,.60) 0%, transparent 100%),
+    radial-gradient(1px   1px   at 15%  26%, rgba(255,255,255,.55) 0%, transparent 100%),
+    radial-gradient(1px   1px   at 55%  18%, rgba(255,255,255,.70) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 75%  22%, rgba(255,220,150,.65) 0%, transparent 100%),
+    radial-gradient(1px   1px   at 35%  14%, rgba(255,255,255,.50) 0%, transparent 100%),
+    radial-gradient(1px   1px   at 90%  30%, rgba(255,255,255,.45) 0%, transparent 100%);
+  animation: starTwinkle 4s ease-in-out infinite alternate;
   pointer-events: none;
   z-index: 0;
+}
+
+/* Candle glow orbs — decorative light sources */
+.atmo-moon::before,
+.atmo-moon::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  animation: candleFlicker 3s ease-in-out infinite;
+}
+.atmo-moon::before {
+  width: 180px; height: 180px;
+  left: 10%; bottom: 30%;
+  background: radial-gradient(circle, rgba(255,140,20,0.40) 0%, transparent 70%);
+  animation-delay: .4s;
+}
+.atmo-moon::after {
+  width: 140px; height: 140px;
+  right: 12%; bottom: 40%;
+  background: radial-gradient(circle, rgba(255,80,30,0.35) 0%, transparent 70%);
+  animation-delay: 1.1s;
 }
 
 .main-wrap { position: relative; z-index: 1; }
@@ -116,25 +148,26 @@ body {
    ============================================================ */
 .wolf-header {
   text-align: center;
-  padding: 2.5rem 1rem 1.5rem;
+  padding: 2.8rem 1rem 1.6rem;
 }
 
 .wolf-title {
-  font-size: clamp(2rem, 7vw, 3.4rem);
+  font-size: clamp(2.2rem, 8vw, 3.8rem);
   font-weight: 900;
   letter-spacing: -0.5px;
-  background: linear-gradient(135deg, #ffffff 10%, #ffd580 45%, #ffb347 65%, #ffffff 90%);
+  background: linear-gradient(135deg, #ffe0a0 0%, #ffc040 30%, #ff8c20 58%, #ffd060 85%, #fff0c0 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  animation: titleShimmer 3.5s ease-in-out infinite;
+  animation: titleShimmer 3.8s ease-in-out infinite;
   margin: 0;
+  filter: drop-shadow(0 2px 12px rgba(200,80,10,0.5));
 }
 
 .wolf-subtitle {
   color: var(--text-muted);
   font-size: .85rem;
-  margin-top: .4rem;
+  margin-top: .5rem;
 }
 
 /* ============================================================
@@ -150,8 +183,8 @@ body {
 }
 
 .standings-card-header {
-  padding: 13px 20px;
-  background: var(--glass-header);
+  padding: 14px 20px;
+  background: rgba(255,255,255,0.10);
   font-weight: 700;
   font-size: 1rem;
   letter-spacing: 1px;
@@ -171,7 +204,7 @@ body {
 
 .rose-icon-sm {
   font-size: 1rem;
-  animation: roseGlow 2.5s ease-in-out infinite;
+  animation: roseGlow 2.8s ease-in-out infinite;
 }
 
 /* ============================================================
@@ -179,12 +212,12 @@ body {
    ============================================================ */
 .standings-card {
   background: var(--glass);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--glass-border);
-  border-radius: 16px;
+  border-radius: 18px;
   overflow: hidden;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.08);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,160,40,0.12), inset 0 1px 0 rgba(255,255,255,0.12);
 }
 
 .standings-table {
@@ -194,38 +227,37 @@ body {
 }
 
 .standings-table thead tr {
-  background: rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.08);
 }
 
 .standings-table th {
-  padding: 12px 14px;
+  padding: 13px 14px;
   font-size: .78rem;
   font-weight: 700;
-  color: rgba(255,200,210,0.90);
+  color: rgba(255,210,140,.95);
   text-transform: uppercase;
   letter-spacing: .5px;
-  border-bottom: 1px solid rgba(255,255,255,0.18);
+  border-bottom: 1px solid rgba(255,255,255,0.15);
   white-space: nowrap;
 }
 
 .standings-table td {
-  padding: 12px 14px;
-  border-bottom: 1px solid rgba(255,255,255,0.09);
+  padding: 13px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
   vertical-align: middle;
 }
 
 .standings-table tbody tr:last-child td { border-bottom: none; }
-
 .standings-table tbody tr { transition: background .15s; }
-.standings-table tbody tr:hover td { background: rgba(255,255,255,0.08); }
+.standings-table tbody tr:hover td { background: rgba(255,255,255,0.07); }
 
 /* Rank highlights */
-.row-gold   td { background: rgba(240,192,48,.15); border-right: 3px solid var(--gold); }
-.row-silver td { background: rgba(192,208,224,.10); border-right: 3px solid var(--silver); }
-.row-bronze td { background: rgba(208,136,64,.12); border-right: 3px solid var(--bronze); }
-.row-gold:hover   td { background: rgba(240,192,48,.22) !important; }
-.row-silver:hover td { background: rgba(192,208,224,.16) !important; }
-.row-bronze:hover td { background: rgba(208,136,64,.18) !important; }
+.row-gold   td { background: rgba(240,192,48,.18); border-right: 3px solid var(--gold); }
+.row-silver td { background: rgba(192,208,224,.12); border-right: 3px solid var(--silver); }
+.row-bronze td { background: rgba(208,136,64,.14); border-right: 3px solid var(--bronze); }
+.row-gold:hover   td { background: rgba(240,192,48,.26) !important; }
+.row-silver:hover td { background: rgba(192,208,224,.18) !important; }
+.row-bronze:hover td { background: rgba(208,136,64,.20) !important; }
 
 .rank-cell   { font-size: 1.3rem; width: 46px; text-align: center; }
 .player-cell { display: flex; align-items: center; gap: 10px; }
@@ -236,7 +268,7 @@ body {
 
 .points-badge {
   display: inline-block;
-  background: linear-gradient(135deg, var(--rose-dark), var(--rose-bright));
+  background: linear-gradient(135deg, #c00028, #ff4060);
   color: #fff;
   font-weight: 800;
   font-size: .95rem;
@@ -244,7 +276,7 @@ body {
   border-radius: 20px;
   min-width: 38px;
   text-align: center;
-  box-shadow: 0 0 14px rgba(232,16,46,.55);
+  box-shadow: 0 0 14px rgba(232,16,46,.55), inset 0 1px 0 rgba(255,255,255,0.2);
 }
 
 .tiebreak-cell { color: var(--text-muted); font-size: .88rem; }
@@ -254,8 +286,8 @@ body {
    ============================================================ */
 .match-card {
   background: var(--glass);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--glass-border);
   border-radius: 14px;
   padding: 13px 16px;
@@ -263,6 +295,7 @@ body {
   transition: background .2s, border-color .2s, box-shadow .2s;
   position: relative;
   overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.10);
 }
 
 .match-card::before {
@@ -270,7 +303,7 @@ body {
   position: absolute;
   top: 6px; left: 10px;
   font-size: .75rem;
-  opacity: .45;
+  opacity: .50;
   filter: drop-shadow(0 0 4px var(--rose));
   transition: opacity .2s;
 }
@@ -279,18 +312,18 @@ body {
   position: absolute;
   top: 6px; right: 10px;
   font-size: .75rem;
-  opacity: .45;
+  opacity: .50;
   filter: drop-shadow(0 0 4px var(--rose));
   transition: opacity .2s;
 }
 
 .match-card:hover {
   background: var(--glass-hover);
-  border-color: rgba(255,255,255,0.45);
-  box-shadow: 0 0 24px rgba(232,16,46,0.22), 0 6px 20px rgba(0,0,0,0.3);
+  border-color: rgba(255,160,40,0.40);
+  box-shadow: 0 0 28px rgba(220,80,20,0.28), 0 6px 24px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.12);
 }
 .match-card:hover::before,
-.match-card:hover::after { opacity: .85; }
+.match-card:hover::after { opacity: .90; }
 
 /* Match row */
 .match-row { display: flex; align-items: center; gap: 4px; }
@@ -313,7 +346,7 @@ body {
 }
 
 .mp-win .mp-name  { font-weight: 800; color: #fff; }
-.mp-lose .mp-name { color: rgba(255,255,255,0.5); }
+.mp-lose .mp-name { color: rgba(255,255,255,0.45); }
 
 .mp-score {
   font-size: 2rem;
@@ -324,8 +357,8 @@ body {
   text-align: center;
 }
 
-.score-win  { color: #fff; filter: drop-shadow(0 0 8px var(--rose-bright)); }
-.score-lose { color: rgba(255,255,255,0.35); }
+.score-win  { color: #fff; filter: drop-shadow(0 0 8px rgba(255,160,40,0.9)); }
+.score-lose { color: rgba(255,255,255,0.32); }
 
 .mc-sep {
   display: flex;
@@ -333,7 +366,7 @@ body {
   align-items: center;
   flex-shrink: 0;
   padding: 0 8px;
-  color: rgba(255,255,255,0.4);
+  color: rgba(255,255,255,0.38);
   font-size: 1.2rem;
   font-weight: 900;
   line-height: 1;
@@ -375,16 +408,16 @@ body {
   left: 20px;
   width: 42px;
   height: 42px;
-  background: rgba(255,255,255,0.12);
+  background: rgba(0,0,0,0.35);
   backdrop-filter: blur(8px);
-  border: 1px solid rgba(255,255,255,0.25);
+  border: 1px solid rgba(255,255,255,0.20);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.1rem;
   text-decoration: none;
-  color: rgba(255,255,255,0.6);
+  color: rgba(255,255,255,0.55);
   opacity: .5;
   transition: opacity .2s, border-color .2s, box-shadow .2s;
   z-index: 100;
@@ -392,7 +425,7 @@ body {
 .admin-link:hover {
   opacity: 1;
   border-color: var(--rose-bright);
-  box-shadow: 0 0 12px var(--rose-glow);
+  box-shadow: 0 0 14px var(--rose-glow);
 }
 
 /* ============================================================
@@ -409,15 +442,15 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #0a0510 0%, #1a080e 100%);
+  background: linear-gradient(148deg, #380d1e 0%, #4a100f 35%, #1a0812 100%);
 }
 
 .login-card {
   background: #fff;
-  border-radius: 16px;
+  border-radius: 18px;
   padding: 2.5rem 2rem;
   width: 100%;
-  max-width: 380px;
+  max-width: 400px;
   box-shadow: 0 24px 64px rgba(0,0,0,.55);
 }
 
@@ -468,16 +501,8 @@ body {
 /* ============================================================
    RESPONSIVE
    ============================================================ */
-@media (max-width: 768px) {
-  body {
-    background-image: url('https://image.pollinations.ai/prompt/two%20majestic%20wolves%20playing%20backgammon%20at%20ornate%20tavern%20table%20warm%20golden%20candlelight%20glowing%20embers%20rich%20amber%20fantasy%20atmosphere%20dramatic%20cinematic%20lighting%20ultra%20detailed%20stunning%20digital%20art%208k%20portrait?width=768&height=1200&nologo=true&seed=557');
-    background-attachment: scroll;
-    background-position: center top;
-  }
-}
-
 @media (max-width: 576px) {
-  .wolf-title  { font-size: 1.8rem; }
+  .wolf-title  { font-size: 2rem; }
   .standings-table th,
   .standings-table td { padding: 8px 8px; font-size: .82rem; }
   .mp-score    { font-size: 1.5rem; }

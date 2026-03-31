@@ -218,5 +218,11 @@
   <script src="js/utils.js"></script>
   <script src="js/github-api.js"></script>
   <script src="js/admin.js"></script>
+  <script>
+    // Show GitHub token field on first visit (no saved token)
+    if (!localStorage.getItem('bgAdminToken')) {
+      document.getElementById('tokenSetupSection').style.display = 'block';
+    }
+  </script>
 </body>
 </html>
