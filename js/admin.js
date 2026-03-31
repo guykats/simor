@@ -66,27 +66,34 @@ async function persist() {
   const indicator = document.getElementById('saveIndicator');
   indicator.style.display = 'block';
   try {
-    // Retry up to 3 times on SHA mismatch
-    for (let attempt = 1; attempt <= 3; attempt++) {
+    // Pre-fetch SHA only if we don't have one yet
+    if (!dataSha) {
       try {
-        // Always fetch the latest SHA before each attempt
-        try {
-          const fresh = await fetchDataAdmin(token);
-          dataSha = fresh.sha;
-        } catch (_) {
-          // File doesn't exist yet (first save) — dataSha stays null
-        }
+        const fresh = await fetchDataAdmin(token);
+        dataSha = fresh.sha;
+      } catch (_) {
+        // File doesn't exist yet — dataSha stays null
+      }
+    }
+    for (let attempt = 1; attempt <= 4; attempt++) {
+      try {
         dataSha = await saveData(token, appData, dataSha);
         return; // success
       } catch (e) {
         const isShaConflict = e.message && (
           e.message.includes('does not match') ||
-          e.message.includes('409') ||
           e.message.includes('conflict')
         );
-        if (isShaConflict && attempt < 3) {
-          await new Promise(r => setTimeout(r, 600 * attempt));
-          continue; // retry
+        if (isShaConflict && attempt < 4) {
+          // Fetch fresh SHA after conflict, then retry
+          try {
+            const fresh = await fetchDataAdmin(token);
+            dataSha = fresh.sha;
+          } catch (_) {
+            dataSha = null;
+          }
+          await new Promise(r => setTimeout(r, 500));
+          continue;
         }
         throw e;
       }

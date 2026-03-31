@@ -1,72 +1,58 @@
 /* ============================================================
-   WOLF & ROSES THEME — Public Leaderboard
+   WOLF & ROSES THEME — Public Leaderboard  (BRIGHT / GLASS)
    ============================================================ */
 
-/* --- Fonts & Variables --- */
 @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;600;800;900&display=swap');
 
 :root {
-  --bg:          #08060e;
-  --surface:     #120a12;
-  --surface2:    #1e0f1a;
-  --border:      #3a1828;
-  --border-glow: #7a1832;
+  --rose:        #e8102e;
+  --rose-bright: #ff3a5a;
+  --rose-dark:   #a00020;
+  --rose-glow:   rgba(232,16,46,0.6);
 
-  --rose:        #d01030;
-  --rose-bright: #f0284a;
-  --rose-dark:   #8a0820;
-  --rose-glow:   rgba(208, 16, 48, 0.55);
+  --gold:        #f0c030;
+  --silver:      #c0d0e0;
+  --bronze:      #d08840;
 
-  --gold:        #d4a020;
-  --silver:      #a8b8cc;
-  --bronze:      #b86828;
+  --text:        #ffffff;
+  --text-soft:   rgba(255,255,255,0.90);
+  --text-muted:  rgba(255,255,255,0.60);
 
-  --text:        #f4ede4;
-  --text-muted:  #9a8890;
-  --success:     #48d060;
-  --danger:      #f04858;
+  --glass:       rgba(255,255,255,0.14);
+  --glass-hover: rgba(255,255,255,0.22);
+  --glass-border:rgba(255,255,255,0.30);
+  --glass-header:rgba(255,255,255,0.20);
 
-  --moon-glow:   rgba(255, 220, 100, 0.18);
+  --success:     #50e870;
+  --danger:      #ff5060;
 }
 
 /* --- Animations --- */
 @keyframes roseGlow {
-  0%, 100% { filter: drop-shadow(0 0 6px rgba(208,16,48,0.8)) drop-shadow(0 0 12px rgba(208,16,48,0.4)); }
-  50%       { filter: drop-shadow(0 0 14px rgba(255,40,80,1))  drop-shadow(0 0 28px rgba(208,16,48,0.7)); }
-}
-
-@keyframes moonPulse {
-  0%, 100% { opacity: .85; transform: scale(1);    filter: drop-shadow(0 0 30px rgba(255,220,80,0.5)); }
-  50%       { opacity: 1;   transform: scale(1.04); filter: drop-shadow(0 0 55px rgba(255,220,80,0.85)); }
-}
-
-@keyframes wolfFloat {
-  0%, 100% { transform: translateY(0);    }
-  50%       { transform: translateY(-7px); }
+  0%, 100% { filter: drop-shadow(0 0 6px rgba(255,60,80,0.9)); }
+  50%       { filter: drop-shadow(0 0 16px rgba(255,60,80,1)) drop-shadow(0 0 30px rgba(232,16,46,0.6)); }
 }
 
 @keyframes titleShimmer {
-  0%, 100% { text-shadow: 0 0 18px rgba(208,16,48,0.6), 0 2px 4px rgba(0,0,0,0.9); }
-  50%       { text-shadow: 0 0 36px rgba(255,40,80,0.9), 0 0 70px rgba(208,16,48,0.5), 0 2px 4px rgba(0,0,0,0.9); }
+  0%, 100% { text-shadow: 0 0 20px rgba(255,180,180,0.5), 0 2px 8px rgba(0,0,0,0.6); }
+  50%       { text-shadow: 0 0 40px rgba(255,100,120,0.9), 0 0 80px rgba(232,16,46,0.4), 0 2px 8px rgba(0,0,0,0.6); }
 }
 
 @keyframes fogDrift {
-  0%   { transform: translateX(0); opacity: .4; }
-  50%  { transform: translateX(30px); opacity: .2; }
-  100% { transform: translateX(0); opacity: .4; }
+  0%,100% { transform: translateX(0);    opacity: .25; }
+  50%      { transform: translateX(28px); opacity: .12; }
 }
 
 @keyframes starTwinkle {
-  0%, 100% { opacity: .6; }
-  50%       { opacity: .15; }
+  0%, 100% { opacity: .8; }
+  50%       { opacity: .2; }
 }
 
 /* ============================================================
-   GLOBAL — Public page base
+   GLOBAL
    ============================================================ */
 body {
-  background-color: var(--bg);
-  /* Wolf with red rose — AI-generated background image */
+  background-color: #1a0a12;
   background-image: url('https://image.pollinations.ai/prompt/two%20majestic%20cool%20wolves%20sitting%20across%20each%20other%20playing%20backgammon%20on%20wooden%20table%20in%20moonlit%20forest%20clearing%20glowing%20full%20moon%20dramatic%20fantasy%20cinematic%20lighting%20ultra%20detailed%20stunning%20digital%20art%208k%20wide%20shot?width=1920&height=1080&nologo=true&seed=221');
   background-size: cover;
   background-position: center center;
@@ -79,122 +65,76 @@ body {
 }
 
 /* ============================================================
-   ATMOSPHERIC BACKGROUND
+   ATMOSPHERIC LAYERS
    ============================================================ */
 
-/* Dark overlay so content stays readable over the wolf image */
+/* Light overlay — just enough to keep text readable */
 .atmo-moon {
   position: fixed;
   inset: 0;
   background:
-    radial-gradient(ellipse at 50% 0%, rgba(80,0,20,0.55) 0%, transparent 65%),
-    linear-gradient(to bottom, rgba(5,3,8,0.55) 0%, rgba(5,3,8,0.80) 60%, rgba(5,3,8,0.92) 100%);
+    radial-gradient(ellipse at 50% 0%,   rgba(120,10,30,0.30) 0%, transparent 55%),
+    linear-gradient(to bottom, rgba(0,0,0,0.20) 0%, rgba(0,0,0,0.38) 100%);
   pointer-events: none;
   z-index: 0;
 }
 
-/* Kept for back-compat but now unused moon halo — repurposed as second overlay layer */
-.atmo-moon-unused {
-  position: fixed;
-  top: -120px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 600px;
-  height: 600px;
-  border-radius: 50%;
-  background: radial-gradient(ellipse at center,
-    rgba(255, 200, 60, 0.14) 0%,
-    rgba(180, 60,  0, 0.10) 40%,
-    transparent 70%);
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* Low red fog */
+/* Bottom fog */
 .atmo-fog {
   position: fixed;
   bottom: 0; left: -10%; right: -10%;
-  height: 260px;
-  background: linear-gradient(to top,
-    rgba(90, 0, 20, 0.32) 0%,
-    transparent 100%);
-  animation: fogDrift 12s ease-in-out infinite;
+  height: 220px;
+  background: linear-gradient(to top, rgba(80,0,20,0.22) 0%, transparent 100%);
+  animation: fogDrift 14s ease-in-out infinite;
   pointer-events: none;
   z-index: 0;
 }
 
-/* Subtle twinkling star dots */
+/* Star dots */
 .atmo-stars {
   position: fixed;
   inset: 0;
   background-image:
-    radial-gradient(1px 1px at  8%  12%, rgba(255,255,255,.55) 0%, transparent 100%),
-    radial-gradient(1px 1px at 22%   5%, rgba(255,255,255,.40) 0%, transparent 100%),
-    radial-gradient(1px 1px at 45%   9%, rgba(255,255,255,.60) 0%, transparent 100%),
-    radial-gradient(1px 1px at 67%   3%, rgba(255,255,255,.45) 0%, transparent 100%),
-    radial-gradient(1px 1px at 83%  14%, rgba(255,255,255,.50) 0%, transparent 100%),
-    radial-gradient(1px 1px at 93%   7%, rgba(255,255,255,.35) 0%, transparent 100%),
-    radial-gradient(1px 1px at 15%  28%, rgba(255,255,255,.30) 0%, transparent 100%),
-    radial-gradient(1px 1px at 55%  20%, rgba(255,255,255,.40) 0%, transparent 100%),
-    radial-gradient(1px 1px at 75%  25%, rgba(255,255,255,.35) 0%, transparent 100%);
-  animation: starTwinkle 4s ease-in-out infinite alternate;
+    radial-gradient(1px 1px at  8%  10%, rgba(255,255,255,.7) 0%, transparent 100%),
+    radial-gradient(1px 1px at 22%   4%, rgba(255,255,255,.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 45%   8%, rgba(255,255,255,.8) 0%, transparent 100%),
+    radial-gradient(1px 1px at 67%   3%, rgba(255,255,255,.6) 0%, transparent 100%),
+    radial-gradient(1px 1px at 83%  13%, rgba(255,255,255,.7) 0%, transparent 100%),
+    radial-gradient(1px 1px at 93%   6%, rgba(255,255,255,.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 15%  26%, rgba(255,255,255,.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 55%  18%, rgba(255,255,255,.6) 0%, transparent 100%),
+    radial-gradient(1px 1px at 75%  22%, rgba(255,255,255,.5) 0%, transparent 100%);
+  animation: starTwinkle 3.5s ease-in-out infinite alternate;
   pointer-events: none;
   z-index: 0;
 }
 
-.main-wrap {
-  position: relative;
-  z-index: 1;
-}
+.main-wrap { position: relative; z-index: 1; }
 
 /* ============================================================
    HERO HEADER
    ============================================================ */
 .wolf-header {
   text-align: center;
-  padding: 2rem 1rem 1.5rem;
+  padding: 2.5rem 1rem 1.5rem;
 }
 
-/* Rose divider */
-.rose-divider {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  margin: .9rem auto;
-  max-width: 340px;
-}
-
-.rose-icon {
-  font-size: 1.5rem;
-  display: inline-block;
-  animation: roseGlow 2.5s ease-in-out infinite;
-}
-
-.rose-line {
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--rose-dark), var(--rose), var(--rose-dark), transparent);
-  box-shadow: 0 0 6px var(--rose-glow);
-}
-
-/* Main title */
 .wolf-title {
-  font-size: clamp(1.9rem, 6vw, 3rem);
+  font-size: clamp(2rem, 7vw, 3.4rem);
   font-weight: 900;
   letter-spacing: -0.5px;
-  background: linear-gradient(135deg, #f4ede4 30%, #e87888 60%, #f4ede4 85%);
+  background: linear-gradient(135deg, #ffffff 20%, #ffb0c0 55%, #ffffff 85%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   animation: titleShimmer 3.5s ease-in-out infinite;
-  margin: .3rem 0;
+  margin: 0;
 }
 
 .wolf-subtitle {
   color: var(--text-muted);
   font-size: .85rem;
-  margin: 0;
+  margin-top: .4rem;
 }
 
 /* ============================================================
@@ -210,20 +150,21 @@ body {
 }
 
 .standings-card-header {
-  padding: 12px 20px;
-  background: linear-gradient(135deg, var(--surface2), #2a101e);
+  padding: 13px 20px;
+  background: var(--glass-header);
   font-weight: 700;
   font-size: 1rem;
   letter-spacing: 1px;
   text-transform: uppercase;
   color: var(--text);
-  border-bottom: 1px solid var(--border-glow);
+  border-bottom: 1px solid var(--glass-border);
+  backdrop-filter: blur(6px);
 }
 
 .section-title {
   font-size: 1rem;
   font-weight: 700;
-  color: var(--text-muted);
+  color: var(--text-soft);
   text-transform: uppercase;
   letter-spacing: 1px;
 }
@@ -234,17 +175,16 @@ body {
 }
 
 /* ============================================================
-   STANDINGS TABLE
+   STANDINGS TABLE  — glass card
    ============================================================ */
 .standings-card {
-  background: var(--surface);
-  border: 1px solid var(--border-glow);
-  border-radius: 14px;
+  background: var(--glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow:
-    0 0 0 1px var(--border),
-    0 8px 40px rgba(0,0,0,0.7),
-    0 0 60px rgba(120,0,30,0.12);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.08);
 }
 
 .standings-table {
@@ -254,46 +194,40 @@ body {
 }
 
 .standings-table thead tr {
-  background: linear-gradient(135deg, var(--surface2) 0%, #1e0818 100%);
+  background: rgba(255,255,255,0.10);
 }
 
 .standings-table th {
-  padding: 11px 14px;
+  padding: 12px 14px;
   font-size: .78rem;
   font-weight: 700;
-  color: #c08898;
+  color: rgba(255,200,210,0.90);
   text-transform: uppercase;
   letter-spacing: .5px;
-  border-bottom: 1px solid var(--border-glow);
+  border-bottom: 1px solid rgba(255,255,255,0.18);
   white-space: nowrap;
 }
 
 .standings-table td {
-  padding: 11px 14px;
-  border-bottom: 1px solid var(--border);
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.09);
   vertical-align: middle;
 }
 
-.standings-table tbody tr:last-child td {
-  border-bottom: none;
-}
+.standings-table tbody tr:last-child td { border-bottom: none; }
 
-.standings-table tbody tr {
-  transition: background .15s;
-}
-.standings-table tbody tr:hover td {
-  background: rgba(180, 20, 50, 0.08);
-}
+.standings-table tbody tr { transition: background .15s; }
+.standings-table tbody tr:hover td { background: rgba(255,255,255,0.08); }
 
-/* Rank rows */
-.row-gold   td { background: rgba(212,160,32,.10); border-right: 3px solid var(--gold); }
-.row-silver td { background: rgba(168,184,204,.07); border-right: 3px solid var(--silver); }
-.row-bronze td { background: rgba(184,104,40,.08); border-right: 3px solid var(--bronze); }
-.row-gold:hover   td { background: rgba(212,160,32,.16) !important; }
-.row-silver:hover td { background: rgba(168,184,204,.12) !important; }
-.row-bronze:hover td { background: rgba(184,104,40,.13) !important; }
+/* Rank highlights */
+.row-gold   td { background: rgba(240,192,48,.15); border-right: 3px solid var(--gold); }
+.row-silver td { background: rgba(192,208,224,.10); border-right: 3px solid var(--silver); }
+.row-bronze td { background: rgba(208,136,64,.12); border-right: 3px solid var(--bronze); }
+.row-gold:hover   td { background: rgba(240,192,48,.22) !important; }
+.row-silver:hover td { background: rgba(192,208,224,.16) !important; }
+.row-bronze:hover td { background: rgba(208,136,64,.18) !important; }
 
-.rank-cell  { font-size: 1.3rem; width: 46px; text-align: center; }
+.rank-cell   { font-size: 1.3rem; width: 46px; text-align: center; }
 .player-cell { display: flex; align-items: center; gap: 10px; }
 .player-name { font-weight: 700; }
 
@@ -302,7 +236,7 @@ body {
 
 .points-badge {
   display: inline-block;
-  background: linear-gradient(135deg, var(--rose-dark), var(--rose));
+  background: linear-gradient(135deg, var(--rose-dark), var(--rose-bright));
   color: #fff;
   font-weight: 800;
   font-size: .95rem;
@@ -310,64 +244,57 @@ body {
   border-radius: 20px;
   min-width: 38px;
   text-align: center;
-  box-shadow: 0 0 12px rgba(208,16,48,.45);
+  box-shadow: 0 0 14px rgba(232,16,46,.55);
 }
 
 .tiebreak-cell { color: var(--text-muted); font-size: .88rem; }
 
 /* ============================================================
-   MATCH CARDS
+   MATCH CARDS — glass
    ============================================================ */
 .match-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
   padding: 13px 16px;
   margin-bottom: 10px;
-  transition: border-color .2s, box-shadow .2s;
+  transition: background .2s, border-color .2s, box-shadow .2s;
   position: relative;
   overflow: hidden;
 }
 
-/* Red rose petal accent on left/right corners */
 .match-card::before {
   content: '🌹';
   position: absolute;
-  top: 6px;
-  left: 10px;
+  top: 6px; left: 10px;
   font-size: .75rem;
-  opacity: .35;
+  opacity: .45;
   filter: drop-shadow(0 0 4px var(--rose));
   transition: opacity .2s;
 }
 .match-card::after {
   content: '🌹';
   position: absolute;
-  top: 6px;
-  right: 10px;
+  top: 6px; right: 10px;
   font-size: .75rem;
-  opacity: .35;
+  opacity: .45;
   filter: drop-shadow(0 0 4px var(--rose));
   transition: opacity .2s;
 }
 
 .match-card:hover {
-  border-color: var(--border-glow);
-  box-shadow: 0 0 20px rgba(120,0,30,0.25), 0 4px 16px rgba(0,0,0,0.5);
+  background: var(--glass-hover);
+  border-color: rgba(255,255,255,0.45);
+  box-shadow: 0 0 24px rgba(232,16,46,0.22), 0 6px 20px rgba(0,0,0,0.3);
 }
 .match-card:hover::before,
-.match-card:hover::after {
-  opacity: .7;
-}
+.match-card:hover::after { opacity: .85; }
 
-/* Match row layout */
-.match-row {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
+/* Match row */
+.match-row { display: flex; align-items: center; gap: 4px; }
 
-/* Player block */
 .mp {
   display: flex;
   align-items: center;
@@ -385,8 +312,8 @@ body {
   min-width: 0;
 }
 
-.mp-win .mp-name  { font-weight: 800; color: var(--text); }
-.mp-lose .mp-name { color: var(--text-muted); }
+.mp-win .mp-name  { font-weight: 800; color: #fff; }
+.mp-lose .mp-name { color: rgba(255,255,255,0.5); }
 
 .mp-score {
   font-size: 2rem;
@@ -397,17 +324,16 @@ body {
   text-align: center;
 }
 
-.score-win  { color: var(--rose-bright); filter: drop-shadow(0 0 6px var(--rose)); }
-.score-lose { color: #503040; }
+.score-win  { color: #fff; filter: drop-shadow(0 0 8px var(--rose-bright)); }
+.score-lose { color: rgba(255,255,255,0.35); }
 
-/* Center separator */
 .mc-sep {
   display: flex;
   flex-direction: column;
   align-items: center;
   flex-shrink: 0;
   padding: 0 8px;
-  color: var(--border-glow);
+  color: rgba(255,255,255,0.4);
   font-size: 1.2rem;
   font-weight: 900;
   line-height: 1;
@@ -430,13 +356,14 @@ body {
 }
 
 .wolf-error {
-  background: rgba(208,16,48,.12);
-  border: 1px solid var(--rose-dark);
-  color: var(--text);
-  border-radius: 10px;
+  background: rgba(232,16,46,.18);
+  border: 1px solid rgba(232,16,46,.5);
+  color: #fff;
+  border-radius: 12px;
   padding: 1rem;
   text-align: center;
   margin-top: 2rem;
+  backdrop-filter: blur(8px);
 }
 
 /* ============================================================
@@ -448,27 +375,28 @@ body {
   left: 20px;
   width: 42px;
   height: 42px;
-  background: var(--surface);
-  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.25);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.1rem;
   text-decoration: none;
-  color: var(--text-muted);
-  opacity: .4;
+  color: rgba(255,255,255,0.6);
+  opacity: .5;
   transition: opacity .2s, border-color .2s, box-shadow .2s;
   z-index: 100;
 }
 .admin-link:hover {
   opacity: 1;
-  border-color: var(--rose);
-  box-shadow: 0 0 10px var(--rose-glow);
+  border-color: var(--rose-bright);
+  box-shadow: 0 0 12px var(--rose-glow);
 }
 
 /* ============================================================
-   ADMIN PAGE  (light theme, not affected by dark vars)
+   ADMIN PAGE
    ============================================================ */
 .admin-body {
   background: #f0f2f5;
@@ -525,13 +453,13 @@ body {
   top: 16px;
   left: 50%;
   transform: translateX(-50%);
-  background: var(--rose, #d01030);
+  background: var(--rose, #e8102e);
   color: #fff;
   padding: 7px 22px;
   border-radius: 20px;
   font-size: .88rem;
   z-index: 9999;
-  box-shadow: 0 4px 16px rgba(208,16,48,.4);
+  box-shadow: 0 4px 16px rgba(232,16,46,.4);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -540,18 +468,16 @@ body {
 /* ============================================================
    RESPONSIVE
    ============================================================ */
-
-/* Portrait background image for mobile — centered on the wolves */
 @media (max-width: 768px) {
   body {
     background-image: url('https://image.pollinations.ai/prompt/two%20majestic%20cool%20wolves%20sitting%20across%20each%20other%20playing%20backgammon%20on%20wooden%20table%20in%20moonlit%20forest%20clearing%20glowing%20full%20moon%20dramatic%20fantasy%20cinematic%20lighting%20ultra%20detailed%20stunning%20digital%20art%208k%20vertical%20portrait?width=768&height=1200&nologo=true&seed=221');
-    background-attachment: scroll; /* fixed doesn't work well on iOS */
+    background-attachment: scroll;
     background-position: center top;
   }
 }
 
 @media (max-width: 576px) {
-  .wolf-title  { font-size: 1.7rem; }
+  .wolf-title  { font-size: 1.8rem; }
   .standings-table th,
   .standings-table td { padding: 8px 8px; font-size: .82rem; }
   .mp-score    { font-size: 1.5rem; }
