@@ -10,11 +10,30 @@ let editingAvatarData = undefined; // undefined = not changed, null = removed, s
 // ===== AUTH =====
 
 async function login() {
-  const t = document.getElementById('tokenInput').value.trim();
+  const pwd = document.getElementById('tokenInput').value.trim();
   const btn = document.getElementById('loginBtn');
   const err = document.getElementById('loginError');
 
-  if (!t) return;
+  if (!pwd) return;
+
+  // Password check
+  if (pwd !== '12321') {
+    err.textContent = 'סיסמה שגויה';
+    err.style.display = 'block';
+    return;
+  }
+
+  // Resolve GitHub token: setup field takes priority, then localStorage
+  const setupInput = document.getElementById('githubTokenSetup');
+  let t = (setupInput && setupInput.value.trim()) || localStorage.getItem('bgAdminToken');
+
+  if (!t) {
+    // First-time: reveal token setup field
+    document.getElementById('tokenSetupSection').style.display = 'block';
+    err.textContent = 'כניסה ראשונה: הזן GitHub Token כדי לאפשר שמירת נתונים';
+    err.style.display = 'block';
+    return;
+  }
 
   btn.disabled = true;
   btn.textContent = 'מתחבר...';
@@ -28,11 +47,11 @@ async function login() {
       appData = result.data;
       dataSha = result.sha;
     } catch (e) {
-      // data.json doesn't exist yet — initialize empty
       appData = { players: [], matches: [], lastUpdated: null };
       dataSha = null;
     }
 
+    localStorage.setItem('bgAdminToken', t);
     token = t;
     sessionStorage.setItem('bgToken', t);
 
@@ -44,8 +63,10 @@ async function login() {
     updatePlayerSelects();
     setDefaultDate();
   } catch (e) {
-    err.textContent = e.message || 'שגיאה בכניסה. בדוק את הטוקן.';
+    localStorage.removeItem('bgAdminToken');
+    err.textContent = e.message || 'שגיאה בכניסה. בדוק את ה-GitHub Token.';
     err.style.display = 'block';
+    document.getElementById('tokenSetupSection').style.display = 'block';
   } finally {
     btn.disabled = false;
     btn.textContent = 'כניסה';
@@ -361,11 +382,25 @@ function escapeHtml(str) {
     .replace(/"/g, '&quot;');
 }
 
-// Auto-login from session
-window.addEventListener('load', () => {
+// Auto-login from session (bypass login screen if session token exists)
+window.addEventListener('load', async () => {
   const saved = sessionStorage.getItem('bgToken');
-  if (saved) {
-    document.getElementById('tokenInput').value = saved;
-    login();
+  if (!saved) return;
+
+  try {
+    const result = await fetchDataAdmin(saved);
+    appData = result.data;
+    dataSha = result.sha;
+  } catch (e) {
+    appData = { players: [], matches: [], lastUpdated: null };
+    dataSha = null;
   }
+
+  token = saved;
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('mainPanel').style.display = 'block';
+  renderPlayersList();
+  renderMatchesList();
+  updatePlayerSelects();
+  setDefaultDate();
 });

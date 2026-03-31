@@ -14,16 +14,28 @@
     <div class="login-card">
       <h2 class="login-title">🔐 כניסה לניהול</h2>
       <div class="mb-3">
-        <label class="form-label fw-semibold" for="tokenInput">GitHub Token</label>
+        <label class="form-label fw-semibold" for="tokenInput">סיסמה</label>
         <input
           type="password"
           id="tokenInput"
           class="form-control"
-          placeholder="ghp_..."
+          placeholder="••••••"
           onkeydown="if(event.key==='Enter') login()"
         >
-        <div class="form-text">הטוקן שמשמש כסיסמת הכניסה. נשמר רק בזיכרון הדפדפן.</div>
       </div>
+
+      <!-- Shown only on first-time setup (no saved GitHub token) -->
+      <div id="tokenSetupSection" style="display:none" class="mb-3">
+        <label class="form-label fw-semibold" for="githubTokenSetup">GitHub Token <small class="text-muted fw-normal">(הגדרה ראשונית בלבד)</small></label>
+        <input
+          type="password"
+          id="githubTokenSetup"
+          class="form-control"
+          placeholder="ghp_..."
+        >
+        <div class="form-text">טוקן עם הרשאות כתיבה לריפו. יישמר בדפדפן לשימוש עתידי.</div>
+      </div>
+
       <button id="loginBtn" onclick="login()" class="btn btn-primary w-100 py-2">כניסה</button>
       <div id="loginError" class="alert alert-danger mt-3 mb-0" style="display:none"></div>
     </div>

@@ -34,8 +34,8 @@
 }
 
 @keyframes titleShimmer {
-  0%, 100% { text-shadow: 0 0 20px rgba(255,180,180,0.5), 0 2px 8px rgba(0,0,0,0.6); }
-  50%       { text-shadow: 0 0 40px rgba(255,100,120,0.9), 0 0 80px rgba(232,16,46,0.4), 0 2px 8px rgba(0,0,0,0.6); }
+  0%, 100% { text-shadow: 0 0 20px rgba(255,210,120,0.6), 0 2px 8px rgba(0,0,0,0.7); }
+  50%       { text-shadow: 0 0 40px rgba(255,180,60,1), 0 0 80px rgba(255,120,20,0.5), 0 2px 8px rgba(0,0,0,0.7); }
 }
 
 @keyframes fogDrift {
@@ -52,8 +52,8 @@
    GLOBAL
    ============================================================ */
 body {
-  background-color: #1a0a12;
-  background-image: url('https://image.pollinations.ai/prompt/two%20majestic%20cool%20wolves%20sitting%20across%20each%20other%20playing%20backgammon%20on%20wooden%20table%20in%20moonlit%20forest%20clearing%20glowing%20full%20moon%20dramatic%20fantasy%20cinematic%20lighting%20ultra%20detailed%20stunning%20digital%20art%208k%20wide%20shot?width=1920&height=1080&nologo=true&seed=221');
+  background-color: #110800;
+  background-image: url('https://image.pollinations.ai/prompt/two%20majestic%20wolves%20playing%20backgammon%20at%20ornate%20tavern%20table%20warm%20golden%20candlelight%20glowing%20embers%20rich%20amber%20fantasy%20atmosphere%20dramatic%20cinematic%20lighting%20ultra%20detailed%20stunning%20digital%20art%208k?width=1920&height=1080&nologo=true&seed=557');
   background-size: cover;
   background-position: center center;
   background-attachment: fixed;
@@ -73,8 +73,8 @@ body {
   position: fixed;
   inset: 0;
   background:
-    radial-gradient(ellipse at 50% 0%,   rgba(120,10,30,0.30) 0%, transparent 55%),
-    linear-gradient(to bottom, rgba(0,0,0,0.20) 0%, rgba(0,0,0,0.38) 100%);
+    radial-gradient(ellipse at 50% 0%,   rgba(180,80,0,0.22) 0%, transparent 55%),
+    linear-gradient(to bottom, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.45) 100%);
   pointer-events: none;
   z-index: 0;
 }
@@ -123,7 +123,7 @@ body {
   font-size: clamp(2rem, 7vw, 3.4rem);
   font-weight: 900;
   letter-spacing: -0.5px;
-  background: linear-gradient(135deg, #ffffff 20%, #ffb0c0 55%, #ffffff 85%);
+  background: linear-gradient(135deg, #ffffff 10%, #ffd580 45%, #ffb347 65%, #ffffff 90%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -470,7 +470,7 @@ body {
    ============================================================ */
 @media (max-width: 768px) {
   body {
-    background-image: url('https://image.pollinations.ai/prompt/two%20majestic%20cool%20wolves%20sitting%20across%20each%20other%20playing%20backgammon%20on%20wooden%20table%20in%20moonlit%20forest%20clearing%20glowing%20full%20moon%20dramatic%20fantasy%20cinematic%20lighting%20ultra%20detailed%20stunning%20digital%20art%208k%20vertical%20portrait?width=768&height=1200&nologo=true&seed=221');
+    background-image: url('https://image.pollinations.ai/prompt/two%20majestic%20wolves%20playing%20backgammon%20at%20ornate%20tavern%20table%20warm%20golden%20candlelight%20glowing%20embers%20rich%20amber%20fantasy%20atmosphere%20dramatic%20cinematic%20lighting%20ultra%20detailed%20stunning%20digital%20art%208k%20portrait?width=768&height=1200&nologo=true&seed=557');
     background-attachment: scroll;
     background-position: center top;
   }
