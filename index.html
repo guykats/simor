@@ -79,6 +79,28 @@
     </div>
   </div><!-- /main-wrap -->
 
+  <!-- Player popup -->
+  <div id="playerPopup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:800;align-items:flex-end;justify-content:center;padding-bottom:0;">
+    <div class="popup-sheet">
+      <!-- Handle -->
+      <div class="popup-handle"></div>
+
+      <!-- Player header -->
+      <div class="popup-header">
+        <div id="popupAvatar"></div>
+        <div>
+          <div id="popupName" class="popup-name"></div>
+          <div id="popupStats" class="popup-stats-row"></div>
+        </div>
+        <button class="popup-close" onclick="closePlayerPopup()">✕</button>
+      </div>
+
+      <!-- Match history -->
+      <div class="popup-section-label">היסטוריית משחקים</div>
+      <div id="popupMatchList" class="popup-match-list"></div>
+    </div>
+  </div>
+
   <!-- Admin link -->
   <a href="admin.html" class="admin-link" title="ניהול">⚙</a>
 
