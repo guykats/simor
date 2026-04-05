@@ -2,123 +2,71 @@
 // Admin panel logic
 // ==============================
 
-let token = null;
-let appData = null;
-let dataSha = null;
-let editingAvatarData = undefined; // undefined = not changed, null = removed, string = new image
+let adminPassword = null;
+let appData       = null;
 
 // ===== AUTH =====
 
 async function login() {
-  const pwd = document.getElementById('tokenInput').value.trim();
+  const pwd = document.getElementById('passwordInput').value.trim();
   const btn = document.getElementById('loginBtn');
   const err = document.getElementById('loginError');
 
   if (!pwd) return;
 
-  // Password check
-  if (pwd !== '12321') {
-    err.textContent = 'סיסמה שגויה';
-    err.style.display = 'block';
-    return;
-  }
-
-  // Resolve GitHub token: setup field takes priority, then localStorage
-  const setupInput = document.getElementById('githubTokenSetup');
-  let t = (setupInput && setupInput.value.trim()) || localStorage.getItem('bgAdminToken');
-
-  if (!t) {
-    // First-time: reveal token setup field
-    document.getElementById('tokenSetupSection').style.display = 'block';
-    err.textContent = 'כניסה ראשונה: הזן GitHub Token כדי לאפשר שמירת נתונים';
-    err.style.display = 'block';
-    return;
-  }
-
-  btn.disabled = true;
+  btn.disabled    = true;
   btn.textContent = 'מתחבר...';
   err.style.display = 'none';
 
   try {
-    await validateToken(t);
-
-    try {
-      const result = await fetchDataAdmin(t);
-      appData = result.data;
-      dataSha = result.sha;
-    } catch (e) {
-      appData = { players: [], matches: [], lastUpdated: null };
-      dataSha = null;
-    }
-
-    localStorage.setItem('bgAdminToken', t);
-    token = t;
-    sessionStorage.setItem('bgToken', t);
-
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('mainPanel').style.display = 'block';
-
-    renderPlayersList();
-    renderMatchesList();
-    updatePlayerSelects();
-    setDefaultDate();
+    await validatePassword(pwd);  // checks against server
   } catch (e) {
-    localStorage.removeItem('bgAdminToken');
-    err.textContent = e.message || 'שגיאה בכניסה. בדוק את ה-GitHub Token.';
+    err.textContent   = e.message || 'סיסמה שגויה';
     err.style.display = 'block';
-    document.getElementById('tokenSetupSection').style.display = 'block';
-  } finally {
-    btn.disabled = false;
-    btn.textContent = 'כניסה';
+    btn.disabled      = false;
+    btn.textContent   = 'כניסה';
+    return;
   }
+
+  adminPassword = pwd;
+  sessionStorage.setItem('bgPwd', pwd);
+
+  try {
+    appData = await fetchData();
+  } catch (_) {
+    appData = { players: [], matches: [], lastUpdated: null };
+  }
+
+  showPanel();
+  btn.disabled    = false;
+  btn.textContent = 'כניסה';
 }
 
 function logout() {
-  token = null;
-  appData = null;
-  dataSha = null;
-  sessionStorage.removeItem('bgToken');
-  document.getElementById('mainPanel').style.display = 'none';
+  adminPassword = null;
+  appData       = null;
+  sessionStorage.removeItem('bgPwd');
+  document.getElementById('mainPanel').style.display  = 'none';
   document.getElementById('loginScreen').style.display = 'flex';
-  document.getElementById('tokenInput').value = '';
+  document.getElementById('passwordInput').value = '';
 }
+
+function showPanel() {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('mainPanel').style.display   = 'block';
+  renderPlayersList();
+  renderMatchesList();
+  updatePlayerSelects();
+  setDefaultDate();
+}
+
+// ===== SAVE =====
 
 async function persist() {
   const indicator = document.getElementById('saveIndicator');
   indicator.style.display = 'block';
   try {
-    // Pre-fetch SHA only if we don't have one yet
-    if (!dataSha) {
-      try {
-        const fresh = await fetchDataAdmin(token);
-        dataSha = fresh.sha;
-      } catch (_) {
-        // File doesn't exist yet — dataSha stays null
-      }
-    }
-    for (let attempt = 1; attempt <= 4; attempt++) {
-      try {
-        dataSha = await saveData(token, appData, dataSha);
-        return; // success
-      } catch (e) {
-        const isShaConflict = e.message && (
-          e.message.includes('does not match') ||
-          e.message.includes('conflict')
-        );
-        if (isShaConflict && attempt < 4) {
-          // Fetch fresh SHA after conflict, then retry
-          try {
-            const fresh = await fetchDataAdmin(token);
-            dataSha = fresh.sha;
-          } catch (_) {
-            dataSha = null;
-          }
-          await new Promise(r => setTimeout(r, 500));
-          continue;
-        }
-        throw e;
-      }
-    }
+    await saveData(adminPassword, appData);
   } catch (e) {
     alert(`שגיאה בשמירה: ${e.message}`);
     throw e;
@@ -130,8 +78,8 @@ async function persist() {
 // ===== TABS =====
 
 function showTab(tab) {
-  document.getElementById('playersTab').style.display = tab === 'players' ? 'block' : 'none';
-  document.getElementById('matchesTab').style.display = tab === 'matches' ? 'block' : 'none';
+  document.getElementById('playersTab').style.display  = tab === 'players' ? 'block' : 'none';
+  document.getElementById('matchesTab').style.display  = tab === 'matches' ? 'block' : 'none';
   document.querySelectorAll('#adminTabs .nav-link').forEach(el => el.classList.remove('active'));
   document.getElementById(`tab-${tab}`).classList.add('active');
 }
@@ -162,12 +110,12 @@ function startEditPlayer(id) {
   const p = appData.players.find(x => x.id === id);
   if (!p) return;
 
-  document.getElementById('editPlayerId').value = id;
-  document.getElementById('playerName').value = p.name;
+  document.getElementById('editPlayerId').value     = id;
+  document.getElementById('playerName').value        = p.name;
   document.getElementById('playerFormTitle').textContent = 'עריכת שחקן';
   document.getElementById('cancelPlayerBtn').style.display = 'inline-block';
 
-  editingAvatarData = undefined; // not changed yet
+  editingAvatarData = undefined;
   const preview = document.getElementById('avatarPreview');
   if (p.avatar) {
     preview.innerHTML = `<img src="${p.avatar}" style="width:80px;height:80px;border-radius:50%;object-fit:cover">`;
@@ -181,14 +129,16 @@ function startEditPlayer(id) {
   document.getElementById('playerName').scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
+let editingAvatarData = undefined;
+
 function cancelPlayerEdit() {
-  document.getElementById('editPlayerId').value = '';
-  document.getElementById('playerName').value = '';
-  document.getElementById('avatarInput').value = '';
+  document.getElementById('editPlayerId').value  = '';
+  document.getElementById('playerName').value     = '';
+  document.getElementById('avatarInput').value    = '';
   document.getElementById('avatarPreview').innerHTML = '';
   document.getElementById('playerFormTitle').textContent = 'הוספת שחקן';
   document.getElementById('cancelPlayerBtn').style.display = 'none';
-  document.getElementById('clearAvatarBtn').style.display = 'none';
+  document.getElementById('clearAvatarBtn').style.display  = 'none';
   editingAvatarData = undefined;
 }
 
@@ -210,7 +160,7 @@ function clearAvatar() {
 }
 
 async function savePlayer() {
-  const name = document.getElementById('playerName').value.trim();
+  const name   = document.getElementById('playerName').value.trim();
   if (!name) { alert('יש להזין שם שחקן'); return; }
 
   const editId = document.getElementById('editPlayerId').value;
@@ -222,11 +172,7 @@ async function savePlayer() {
       if (editingAvatarData !== undefined) p.avatar = editingAvatarData;
     }
   } else {
-    appData.players.push({
-      id: generateId(),
-      name,
-      avatar: editingAvatarData || null
-    });
+    appData.players.push({ id: generateId(), name, avatar: editingAvatarData || null });
   }
 
   await persist();
@@ -252,7 +198,9 @@ async function deletePlayer(id) {
 
 function updatePlayerSelects() {
   const placeholder = '<option value="">-- בחר שחקן --</option>';
-  const options = appData.players.map(p => `<option value="${p.id}">${escapeHtml(p.name)}</option>`).join('');
+  const options = appData.players
+    .map(p => `<option value="${p.id}">${escapeHtml(p.name)}</option>`)
+    .join('');
   document.getElementById('matchPlayer1').innerHTML = placeholder + options;
   document.getElementById('matchPlayer2').innerHTML = placeholder + options;
 }
@@ -269,8 +217,8 @@ function renderMatchesList() {
   container.innerHTML = `
     <div class="list-group">
       ${sorted.map(m => {
-        const p1 = appData.players.find(p => p.id === m.player1Id) || { name: '?' };
-        const p2 = appData.players.find(p => p.id === m.player2Id) || { name: '?' };
+        const p1    = appData.players.find(p => p.id === m.player1Id) || { name: '?' };
+        const p2    = appData.players.find(p => p.id === m.player2Id) || { name: '?' };
         const p1Won = parseInt(m.score1) > parseInt(m.score2);
         return `
           <div class="list-group-item py-3">
@@ -287,8 +235,8 @@ function renderMatchesList() {
               </div>
             </div>
             <div class="d-flex justify-content-end gap-2 mt-2">
-              <button onclick="startEditMatch('${m.id}')" class="btn btn-sm btn-outline-secondary" title="עריכה">✏️</button>
-              <button onclick="deleteMatch('${m.id}')" class="btn btn-sm btn-outline-danger" title="מחיקה">🗑️</button>
+              <button onclick="startEditMatch('${m.id}')" class="btn btn-sm btn-outline-secondary">✏️</button>
+              <button onclick="deleteMatch('${m.id}')"    class="btn btn-sm btn-outline-danger">🗑️</button>
             </div>
           </div>
         `;
@@ -301,45 +249,44 @@ function startEditMatch(id) {
   const m = appData.matches.find(x => x.id === id);
   if (!m) return;
 
-  document.getElementById('editMatchId').value = id;
-  document.getElementById('matchPlayer1').value = m.player1Id;
-  document.getElementById('matchPlayer2').value = m.player2Id;
-  document.getElementById('score1').value = m.score1;
-  document.getElementById('score2').value = m.score2;
-  document.getElementById('matchDate').value = m.date || '';
-  document.getElementById('matchFormTitle').textContent = 'עריכת תוצאה';
+  document.getElementById('editMatchId').value    = id;
+  document.getElementById('matchPlayer1').value   = m.player1Id;
+  document.getElementById('matchPlayer2').value   = m.player2Id;
+  document.getElementById('score1').value          = m.score1;
+  document.getElementById('score2').value          = m.score2;
+  document.getElementById('matchDate').value       = m.date || '';
+  document.getElementById('matchFormTitle').textContent  = 'עריכת תוצאה';
   document.getElementById('cancelMatchBtn').style.display = 'inline-block';
-  document.getElementById('matchError').style.display = 'none';
+  document.getElementById('matchError').style.display     = 'none';
   document.getElementById('score1').focus();
   document.getElementById('score1').scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 function cancelMatchEdit() {
-  document.getElementById('editMatchId').value = '';
+  document.getElementById('editMatchId').value  = '';
   document.getElementById('matchPlayer1').value = '';
   document.getElementById('matchPlayer2').value = '';
-  document.getElementById('score1').value = '';
-  document.getElementById('score2').value = '';
+  document.getElementById('score1').value        = '';
+  document.getElementById('score2').value        = '';
   setDefaultDate();
-  document.getElementById('matchFormTitle').textContent = 'הוספת תוצאה';
+  document.getElementById('matchFormTitle').textContent  = 'הוספת תוצאה';
   document.getElementById('cancelMatchBtn').style.display = 'none';
-  document.getElementById('matchError').style.display = 'none';
+  document.getElementById('matchError').style.display     = 'none';
 }
 
 async function saveMatch() {
   const p1Id = document.getElementById('matchPlayer1').value;
   const p2Id = document.getElementById('matchPlayer2').value;
-  const s1 = parseInt(document.getElementById('score1').value);
-  const s2 = parseInt(document.getElementById('score2').value);
+  const s1   = parseInt(document.getElementById('score1').value);
+  const s2   = parseInt(document.getElementById('score2').value);
   const date = document.getElementById('matchDate').value;
-  const errEl = document.getElementById('matchError');
 
-  errEl.style.display = 'none';
+  document.getElementById('matchError').style.display = 'none';
 
-  if (!p1Id || !p2Id) { showMatchError('יש לבחור שני שחקנים'); return; }
-  if (p1Id === p2Id) { showMatchError('לא ניתן לבחור אותו שחקן פעמיים'); return; }
-  if (isNaN(s1) || isNaN(s2) || s1 < 0 || s2 < 0) { showMatchError('ניקוד לא תקין'); return; }
-  if (s1 === s2) { showMatchError('התוצאה חייבת להיות שונה (לא תיקו)'); return; }
+  if (!p1Id || !p2Id)                              { showMatchError('יש לבחור שני שחקנים'); return; }
+  if (p1Id === p2Id)                               { showMatchError('לא ניתן לבחור אותו שחקן פעמיים'); return; }
+  if (isNaN(s1) || isNaN(s2) || s1 < 0 || s2 < 0){ showMatchError('ניקוד לא תקין'); return; }
+  if (s1 === s2)                                   { showMatchError('התוצאה חייבת להיות שונה (לא תיקו)'); return; }
 
   const editId = document.getElementById('editMatchId').value;
 
@@ -366,8 +313,8 @@ async function deleteMatch(id) {
 
 function showMatchError(msg) {
   const el = document.getElementById('matchError');
-  el.textContent = msg;
-  el.style.display = 'block';
+  el.textContent    = msg;
+  el.style.display  = 'block';
 }
 
 function setDefaultDate() {
@@ -382,31 +329,16 @@ function escapeHtml(str) {
     .replace(/"/g, '&quot;');
 }
 
-// Auto-login from session — validates token first so expired tokens don't show empty panel
+// Auto-login from session
 window.addEventListener('load', async () => {
-  const saved = sessionStorage.getItem('bgToken');
+  const saved = sessionStorage.getItem('bgPwd');
   if (!saved) return;
 
+  adminPassword = saved;
   try {
-    await validateToken(saved); // throws if token is invalid/expired
-    try {
-      const result = await fetchDataAdmin(saved);
-      appData = result.data;
-      dataSha = result.sha;
-    } catch (_) {
-      // data.json not found yet — empty state is OK
-      appData = { players: [], matches: [], lastUpdated: null };
-      dataSha = null;
-    }
-    token = saved;
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('mainPanel').style.display = 'block';
-    renderPlayersList();
-    renderMatchesList();
-    updatePlayerSelects();
-    setDefaultDate();
+    appData = await fetchData();
   } catch (_) {
-    // Token expired or revoked — clear session, stay on login screen
-    sessionStorage.removeItem('bgToken');
+    appData = { players: [], matches: [], lastUpdated: null };
   }
+  showPanel();
 });

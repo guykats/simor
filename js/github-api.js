@@ -1,75 +1,45 @@
 // ==============================
-// GitHub API wrapper
+// Hostinger API wrapper
+// Replaces GitHub Contents API — no token needed
 // ==============================
 
+const API_URL = 'https://guykats.com/simor/api.php';
+
+// Public read — used by leaderboard page
 async function fetchData() {
-  const url = `https://raw.githubusercontent.com/${CONFIG.owner}/${CONFIG.repo}/${CONFIG.branch}/${CONFIG.dataFile}?t=${Date.now()}`;
-  const res = await fetch(url);
+  const res = await fetch(API_URL + '?t=' + Date.now());
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json();
 }
 
-async function fetchDataAdmin(token) {
-  // Add timestamp to bypass any server-side caching
-  const url = `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/${CONFIG.dataFile}?t=${Date.now()}`;
-  const res = await fetch(url, {
-    headers: {
-      'Authorization': `token ${token}`,
-      'Accept': 'application/vnd.github.v3+json',
-      'Cache-Control': 'no-cache',
-    }
-  });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.message || `HTTP ${res.status}`);
-  }
-  const result = await res.json();
-  const content = result.content.replace(/\n/g, '');
-  return {
-    data: JSON.parse(decodeURIComponent(escape(atob(content)))),
-    sha: result.sha
-  };
-}
-
-async function saveData(token, data, sha) {
+// Admin save — password checked server-side in PHP
+async function saveData(password, data) {
   data.lastUpdated = new Date().toISOString();
-  const jsonStr = JSON.stringify(data, null, 2);
-  const content = btoa(unescape(encodeURIComponent(jsonStr)));
 
-  const url = `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/${CONFIG.dataFile}`;
-  const body = {
-    message: 'עדכון נתוני לוח התוצאות',
-    content,
-    branch: CONFIG.branch
-  };
-  if (sha) body.sha = sha;
-
-  const res = await fetch(url, {
-    method: 'PUT',
-    headers: {
-      'Authorization': `token ${token}`,
-      'Accept': 'application/vnd.github.v3+json',
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(body)
+  const res = await fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ password, data })
   });
+
+  const result = await res.json().catch(() => ({}));
 
   if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.message || 'שגיאה בשמירה');
+    throw new Error(result.error || `HTTP ${res.status}`);
   }
 
-  const result = await res.json();
-  return result.content.sha;
+  return result;
 }
 
-async function validateToken(token) {
-  const url = `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}`;
-  const res = await fetch(url, {
-    headers: {
-      'Authorization': `token ${token}`,
-      'Accept': 'application/vnd.github.v3+json'
-    }
+// Validate admin password against the server
+async function validatePassword(password) {
+  // Send an empty data object — server will reject wrong password with 401
+  const res = await fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ password, data: null })
   });
-  if (!res.ok) throw new Error('טוקן לא תקין או אין גישה לריפו');
+
+  if (res.status === 401) throw new Error('סיסמה שגויה');
+  // 400 (null data) means password was accepted — that's fine for validation
 }

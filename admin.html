@@ -12,30 +12,18 @@
   <!-- ===== LOGIN SCREEN ===== -->
   <div id="loginScreen" class="login-screen">
     <div class="login-card">
-      <h2 class="login-title">🔐 כניסה לניהול</h2>
+      <h2 class="login-title">🎲 ניהול ששבסימור</h2>
       <div class="mb-3">
-        <label class="form-label fw-semibold" for="tokenInput">סיסמה</label>
+        <label class="form-label fw-semibold" for="passwordInput">סיסמה</label>
         <input
           type="password"
-          id="tokenInput"
+          id="passwordInput"
           class="form-control"
           placeholder="••••••"
           onkeydown="if(event.key==='Enter') login()"
+          autofocus
         >
       </div>
-
-      <!-- Shown only on first-time setup (no saved GitHub token) -->
-      <div id="tokenSetupSection" style="display:none" class="mb-3">
-        <label class="form-label fw-semibold" for="githubTokenSetup">GitHub Token <small class="text-muted fw-normal">(הגדרה ראשונית בלבד)</small></label>
-        <input
-          type="password"
-          id="githubTokenSetup"
-          class="form-control"
-          placeholder="ghp_..."
-        >
-        <div class="form-text">טוקן עם הרשאות כתיבה לריפו. יישמר בדפדפן לשימוש עתידי.</div>
-      </div>
-
       <button id="loginBtn" onclick="login()" class="btn btn-primary w-100 py-2">כניסה</button>
       <div id="loginError" class="alert alert-danger mt-3 mb-0" style="display:none"></div>
     </div>
@@ -218,11 +206,5 @@
   <script src="js/utils.js"></script>
   <script src="js/github-api.js"></script>
   <script src="js/admin.js"></script>
-  <script>
-    // Show GitHub token field on first visit (no saved token)
-    if (!localStorage.getItem('bgAdminToken')) {
-      document.getElementById('tokenSetupSection').style.display = 'block';
-    }
-  </script>
 </body>
 </html>
