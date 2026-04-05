@@ -499,6 +499,178 @@ body {
 }
 
 /* ============================================================
+   ADD MATCH FAB
+   ============================================================ */
+.add-match-fab {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 62px;
+  height: 62px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #b00025, #ff3a5a);
+  color: #fff;
+  font-size: 2rem;
+  font-weight: 300;
+  line-height: 1;
+  border: none;
+  box-shadow: 0 4px 24px rgba(232,16,46,0.60), 0 2px 8px rgba(0,0,0,0.45);
+  cursor: pointer;
+  z-index: 200;
+  transition: transform .15s, box-shadow .15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.add-match-fab:hover {
+  transform: translateX(-50%) scale(1.10);
+  box-shadow: 0 6px 32px rgba(232,16,46,0.75), 0 3px 12px rgba(0,0,0,0.5);
+}
+.add-match-fab:active { transform: translateX(-50%) scale(0.95); }
+
+/* ============================================================
+   ADD MATCH FORM (inside popup-sheet)
+   ============================================================ */
+.add-match-form {
+  padding: 4px 18px 28px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.form-group-dark {
+  margin-bottom: 14px;
+}
+.form-group-dark label {
+  display: block;
+  font-size: .78rem;
+  font-weight: 700;
+  color: rgba(255,210,140,.85);
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-bottom: 5px;
+}
+.form-group-dark input,
+.form-group-dark select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.10);
+  color: #fff;
+  font-family: inherit;
+  font-size: .95rem;
+}
+.form-group-dark input::placeholder { color: rgba(255,255,255,0.35); }
+.form-group-dark input:focus,
+.form-group-dark select:focus {
+  outline: none;
+  border-color: rgba(255,160,40,0.7);
+  background: rgba(255,255,255,0.15);
+  box-shadow: 0 0 0 3px rgba(255,160,40,0.12);
+}
+.form-group-dark select option { background: #2d0f14; color: #fff; }
+
+/* Players + score row */
+.am-score-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.am-player-col {
+  flex: 1;
+  min-width: 0;
+}
+.am-player-col label {
+  display: block;
+  font-size: .78rem;
+  font-weight: 700;
+  color: rgba(255,210,140,.85);
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-bottom: 5px;
+}
+.am-player-col select {
+  width: 100%;
+  padding: 10px 8px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.10);
+  color: #fff;
+  font-family: inherit;
+  font-size: .88rem;
+}
+.am-player-col select:focus {
+  outline: none;
+  border-color: rgba(255,160,40,0.7);
+}
+.am-player-col select option { background: #2d0f14; color: #fff; }
+
+.am-vs-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  padding-bottom: 2px;
+}
+.am-vs-col input {
+  width: 54px;
+  text-align: center;
+  padding: 10px 6px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.10);
+  color: #fff;
+  font-size: 1.15rem;
+  font-weight: 800;
+  font-family: inherit;
+  -moz-appearance: textfield;
+}
+.am-vs-col input::-webkit-outer-spin-button,
+.am-vs-col input::-webkit-inner-spin-button { -webkit-appearance: none; }
+.am-vs-col input:focus {
+  outline: none;
+  border-color: rgba(255,160,40,0.7);
+  background: rgba(255,255,255,0.15);
+}
+.am-dash {
+  color: rgba(255,255,255,0.4);
+  font-size: 1.1rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.am-error {
+  background: rgba(232,16,46,.18);
+  border: 1px solid rgba(232,16,46,.45);
+  color: #ff8090;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: .85rem;
+  margin-bottom: 12px;
+}
+
+.am-submit-btn {
+  width: 100%;
+  padding: 13px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #b00025, #ff3a5a);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 800;
+  font-family: inherit;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(232,16,46,.40);
+  transition: opacity .15s, transform .1s;
+}
+.am-submit-btn:hover   { opacity: .9; }
+.am-submit-btn:active  { transform: scale(0.98); }
+.am-submit-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+/* ============================================================
    PLAYER POPUP (bottom sheet)
    ============================================================ */
 

@@ -102,6 +102,97 @@ function matchCardHtml(m, players) {
   `;
 }
 
+// ===== ADD MATCH POPUP =====
+
+function openAddMatchPopup() {
+  if (_players.length < 2) {
+    alert('יש צורך בלפחות 2 שחקנים');
+    return;
+  }
+
+  const opts = '<option value="">-- בחר שחקן --</option>' +
+    _players.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+  document.getElementById('addMatchP1').innerHTML = opts;
+  document.getElementById('addMatchP2').innerHTML = opts;
+  document.getElementById('addMatchDate').value   = new Date().toISOString().split('T')[0];
+  document.getElementById('addMatchS1').value     = '';
+  document.getElementById('addMatchS2').value     = '';
+  document.getElementById('addMatchError').style.display = 'none';
+
+  // Hide password field if already authenticated this session
+  const savedPwd = sessionStorage.getItem('bgPwd');
+  document.getElementById('addMatchPwdSection').style.display = savedPwd ? 'none' : 'block';
+  if (!savedPwd) document.getElementById('addMatchPwd').value = '';
+
+  document.getElementById('addMatchModal').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeAddMatchPopup() {
+  document.getElementById('addMatchModal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+async function submitAddMatch() {
+  const p1Id = document.getElementById('addMatchP1').value;
+  const p2Id = document.getElementById('addMatchP2').value;
+  const s1   = parseInt(document.getElementById('addMatchS1').value);
+  const s2   = parseInt(document.getElementById('addMatchS2').value);
+  const date = document.getElementById('addMatchDate').value;
+  const btn  = document.getElementById('addMatchBtn');
+
+  const pwd  = sessionStorage.getItem('bgPwd') ||
+               document.getElementById('addMatchPwd').value.trim();
+
+  if (!pwd)                                       return _amErr('הזן סיסמה');
+  if (!p1Id || !p2Id)                             return _amErr('יש לבחור שני שחקנים');
+  if (p1Id === p2Id)                              return _amErr('לא ניתן לבחור אותו שחקן פעמיים');
+  if (isNaN(s1) || isNaN(s2) || s1 < 0 || s2 < 0) return _amErr('ניקוד לא תקין');
+  if (s1 === s2)                                  return _amErr('אין תיקו — יש להכניס תוצאה שונה');
+
+  btn.disabled    = true;
+  btn.textContent = 'שומר...';
+  document.getElementById('addMatchError').style.display = 'none';
+
+  try {
+    const updatedData = {
+      players: _players,
+      matches: [..._matches, {
+        id: generateId(), player1Id: p1Id, player2Id: p2Id,
+        score1: s1, score2: s2, date
+      }]
+    };
+
+    await saveData(pwd, updatedData);
+    sessionStorage.setItem('bgPwd', pwd);
+
+    // Update in-memory state and re-render
+    _matches = updatedData.matches;
+    const standings = calculateStandings(_players, _matches);
+    renderStandings(standings);
+    renderMatches(_matches, _players);
+
+    closeAddMatchPopup();
+  } catch (e) {
+    if (e.message && (e.message.includes('Unauthorized') || e.message.includes('401'))) {
+      sessionStorage.removeItem('bgPwd');
+      document.getElementById('addMatchPwdSection').style.display = 'block';
+      _amErr('סיסמה שגויה');
+    } else {
+      _amErr('שגיאה בשמירה: ' + e.message);
+    }
+  } finally {
+    btn.disabled    = false;
+    btn.textContent = 'שמור תוצאה';
+  }
+}
+
+function _amErr(msg) {
+  const el = document.getElementById('addMatchError');
+  el.textContent   = msg;
+  el.style.display = 'block';
+}
+
 // ===== PLAYER POPUP =====
 
 function showPlayerPopup(playerId) {
@@ -151,13 +242,16 @@ function closePlayerPopup() {
   document.body.style.overflow = '';
 }
 
-// Close on backdrop click
+// Close modals on backdrop click or Escape
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('playerPopup').addEventListener('click', e => {
     if (e.target === document.getElementById('playerPopup')) closePlayerPopup();
   });
+  document.getElementById('addMatchModal').addEventListener('click', e => {
+    if (e.target === document.getElementById('addMatchModal')) closeAddMatchPopup();
+  });
   document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') closePlayerPopup();
+    if (e.key === 'Escape') { closePlayerPopup(); closeAddMatchPopup(); }
   });
 });
 

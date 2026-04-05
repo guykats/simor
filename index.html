@@ -79,6 +79,58 @@
     </div>
   </div><!-- /main-wrap -->
 
+  <!-- Add match FAB -->
+  <button class="add-match-fab" onclick="openAddMatchPopup()" title="הוסף תוצאה">+</button>
+
+  <!-- Add match modal -->
+  <div id="addMatchModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.78);z-index:810;align-items:flex-end;justify-content:center;">
+    <div class="popup-sheet" style="max-height:92vh;">
+      <div class="popup-handle"></div>
+
+      <div class="popup-header">
+        <span style="font-size:1.5rem;line-height:1;">🎲</span>
+        <div class="popup-name" style="font-size:1.05rem;">הוספת תוצאה</div>
+        <button class="popup-close" onclick="closeAddMatchPopup()">✕</button>
+      </div>
+
+      <div class="add-match-form">
+
+        <!-- Password (hidden when already authenticated) -->
+        <div id="addMatchPwdSection" class="form-group-dark">
+          <label>סיסמה</label>
+          <input type="password" id="addMatchPwd" placeholder="••••••" autocomplete="current-password">
+        </div>
+
+        <!-- Players & score row -->
+        <div class="am-score-row">
+          <div class="am-player-col">
+            <label>שחקן 1</label>
+            <select id="addMatchP1"></select>
+          </div>
+          <div class="am-vs-col">
+            <input type="number" id="addMatchS1" min="0" placeholder="0">
+            <span class="am-dash">–</span>
+            <input type="number" id="addMatchS2" min="0" placeholder="0">
+          </div>
+          <div class="am-player-col">
+            <label>שחקן 2</label>
+            <select id="addMatchP2"></select>
+          </div>
+        </div>
+
+        <!-- Date -->
+        <div class="form-group-dark">
+          <label>תאריך</label>
+          <input type="date" id="addMatchDate">
+        </div>
+
+        <div id="addMatchError" class="am-error" style="display:none;"></div>
+
+        <button id="addMatchBtn" class="am-submit-btn" onclick="submitAddMatch()">שמור תוצאה</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Player popup -->
   <div id="playerPopup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:800;align-items:flex-end;justify-content:center;padding-bottom:0;">
     <div class="popup-sheet">
