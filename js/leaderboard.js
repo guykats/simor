@@ -150,6 +150,18 @@ async function submitAddMatch() {
   if (isNaN(s1) || isNaN(s2) || s1 < 0 || s2 < 0) return _amErr('ניקוד לא תקין');
   if (s1 === s2)                                  return _amErr('אין תיקו — יש להכניס תוצאה שונה');
 
+  // Duplicate check — same pair on same date
+  const duplicate = _matches.find(m =>
+    m.date === date &&
+    ((m.player1Id === p1Id && m.player2Id === p2Id) ||
+     (m.player1Id === p2Id && m.player2Id === p1Id))
+  );
+  if (duplicate) {
+    const pa = _players.find(p => p.id === p1Id);
+    const pb = _players.find(p => p.id === p2Id);
+    return _amErr(`משחק בין ${pa?.name ?? ''} ל-${pb?.name ?? ''} כבר קיים בתאריך זה`);
+  }
+
   btn.disabled    = true;
   btn.textContent = 'שומר...';
   document.getElementById('addMatchError').style.display = 'none';

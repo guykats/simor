@@ -286,6 +286,20 @@ async function saveMatch() {
 
   const editId = document.getElementById('editMatchId').value;
 
+  // Duplicate check — same pair on same date (skip when editing the same match)
+  const duplicate = appData.matches.find(m =>
+    m.id !== editId &&
+    m.date === date &&
+    ((m.player1Id === p1Id && m.player2Id === p2Id) ||
+     (m.player1Id === p2Id && m.player2Id === p1Id))
+  );
+  if (duplicate) {
+    const pa = appData.players.find(p => p.id === p1Id);
+    const pb = appData.players.find(p => p.id === p2Id);
+    showMatchError(`משחק בין ${pa?.name ?? ''} ל-${pb?.name ?? ''} כבר קיים בתאריך זה`);
+    return;
+  }
+
   if (editId) {
     const m = appData.matches.find(x => x.id === editId);
     if (m) Object.assign(m, { player1Id: p1Id, player2Id: p2Id, score1: s1, score2: s2, date });
