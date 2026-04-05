@@ -202,6 +202,41 @@
     שומר...
   </div>
 
+  <!-- ===== IMAGE CROP MODAL ===== -->
+  <div id="cropModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:9999;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:16px;">
+
+    <p style="color:#fff;font-size:1.05rem;font-weight:700;margin:0;letter-spacing:.3px;">בחר את האזור להצגה</p>
+
+    <!-- Circular crop window -->
+    <div style="position:relative;">
+      <!-- The draggable image lives here -->
+      <div id="cropContainer"
+        style="width:280px;height:280px;border-radius:50%;overflow:hidden;position:relative;cursor:grab;flex-shrink:0;touch-action:none;">
+        <img id="cropImg" draggable="false"
+          style="position:absolute;top:0;left:0;transform-origin:0 0;user-select:none;-webkit-user-drag:none;pointer-events:none;">
+      </div>
+      <!-- Ring overlay to show circle border clearly -->
+      <div style="position:absolute;inset:-4px;border-radius:50%;border:4px solid rgba(255,255,255,0.85);pointer-events:none;box-shadow:0 0 0 9999px rgba(0,0,0,0.55);"></div>
+    </div>
+
+    <!-- Zoom controls -->
+    <div style="display:flex;align-items:center;gap:14px;">
+      <button id="cropZoomOut"
+        style="width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.14);color:#fff;border:1px solid rgba(255,255,255,0.28);font-size:1.5rem;line-height:1;cursor:pointer;">−</button>
+      <span style="color:rgba(255,255,255,0.45);font-size:.78rem;white-space:nowrap;">גלגל עכבר · פינץ' · גרור</span>
+      <button id="cropZoomIn"
+        style="width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.14);color:#fff;border:1px solid rgba(255,255,255,0.28);font-size:1.5rem;line-height:1;cursor:pointer;">+</button>
+    </div>
+
+    <!-- Action buttons -->
+    <div style="display:flex;gap:12px;">
+      <button id="cropConfirmBtn"
+        style="background:#e8102e;color:#fff;border:none;padding:11px 34px;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;">✓ אישור</button>
+      <button id="cropCancelBtn"
+        style="background:rgba(255,255,255,0.10);color:#fff;border:1px solid rgba(255,255,255,0.22);padding:11px 34px;border-radius:10px;font-size:1rem;cursor:pointer;">ביטול</button>
+    </div>
+  </div>
+
   <script src="js/config.js"></script>
   <script src="js/utils.js"></script>
   <script src="js/github-api.js"></script>

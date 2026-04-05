@@ -142,13 +142,9 @@ function cancelPlayerEdit() {
   editingAvatarData = undefined;
 }
 
-async function previewAvatar(input) {
+function previewAvatar(input) {
   if (!input.files[0]) return;
-  const compressed = await compressImage(input.files[0]);
-  editingAvatarData = compressed;
-  document.getElementById('avatarPreview').innerHTML =
-    `<img src="${compressed}" style="width:80px;height:80px;border-radius:50%;object-fit:cover">`;
-  document.getElementById('clearAvatarBtn').style.display = 'inline-block';
+  openCropper(URL.createObjectURL(input.files[0]));
 }
 
 function clearAvatar() {
@@ -309,6 +305,174 @@ async function deleteMatch(id) {
   renderMatchesList();
 }
 
+// ===== IMAGE CROPPER =====
+
+const CROP_SIZE = 280; // diameter of the crop circle (px)
+
+const _c = {   // crop state
+  x: 0, y: 0,
+  scale: 1, minScale: 1,
+  imgW: 0, imgH: 0,
+  dragging: false,
+  lastX: 0, lastY: 0,
+  lastDist: 0,
+  objectUrl: null,
+};
+
+function openCropper(src) {
+  if (_c.objectUrl) URL.revokeObjectURL(_c.objectUrl);
+  _c.objectUrl = src;
+
+  const modal = document.getElementById('cropModal');
+  const img   = document.getElementById('cropImg');
+
+  modal.style.display = 'flex';
+  img.src = src;
+
+  img.onload = () => {
+    _c.imgW = img.naturalWidth;
+    _c.imgH = img.naturalHeight;
+
+    // Initial scale: cover the circle
+    _c.scale    = Math.max(CROP_SIZE / _c.imgW, CROP_SIZE / _c.imgH);
+    _c.minScale = _c.scale;
+
+    // Center image inside container
+    _c.x = (CROP_SIZE - _c.imgW * _c.scale) / 2;
+    _c.y = (CROP_SIZE - _c.imgH * _c.scale) / 2;
+
+    _cropApply();
+  };
+}
+
+function _cropApply() {
+  document.getElementById('cropImg').style.transform =
+    `translate(${_c.x}px,${_c.y}px) scale(${_c.scale})`;
+}
+
+function _cropClamp() {
+  _c.x = Math.min(0, Math.max(CROP_SIZE - _c.imgW * _c.scale, _c.x));
+  _c.y = Math.min(0, Math.max(CROP_SIZE - _c.imgH * _c.scale, _c.y));
+}
+
+function _cropZoom(factor, cx = CROP_SIZE / 2, cy = CROP_SIZE / 2) {
+  const newScale = Math.max(_c.minScale, _c.scale * factor);
+  const f = newScale / _c.scale;
+  _c.x     = cx + (_c.x - cx) * f;
+  _c.y     = cy + (_c.y - cy) * f;
+  _c.scale = newScale;
+  _cropClamp();
+  _cropApply();
+}
+
+function confirmCrop() {
+  const img    = document.getElementById('cropImg');
+  const canvas = document.createElement('canvas');
+  canvas.width = canvas.height = 256;
+  const ctx = canvas.getContext('2d');
+
+  // Map container (0,0) back to image coords
+  const sx    = -_c.x / _c.scale;
+  const sy    = -_c.y / _c.scale;
+  const sSize = CROP_SIZE / _c.scale;
+
+  ctx.drawImage(img, sx, sy, sSize, sSize, 0, 0, 256, 256);
+
+  editingAvatarData = canvas.toDataURL('image/jpeg', 0.88);
+  document.getElementById('avatarPreview').innerHTML =
+    `<img src="${editingAvatarData}" style="width:80px;height:80px;border-radius:50%;object-fit:cover">`;
+  document.getElementById('clearAvatarBtn').style.display = 'inline-block';
+
+  _closeCropper();
+}
+
+function cancelCrop() {
+  _closeCropper();
+}
+
+function _closeCropper() {
+  document.getElementById('cropModal').style.display = 'none';
+  document.getElementById('avatarInput').value = '';
+  if (_c.objectUrl) { URL.revokeObjectURL(_c.objectUrl); _c.objectUrl = null; }
+}
+
+function _setupCropper() {
+  const container = document.getElementById('cropContainer');
+
+  // Mouse
+  container.addEventListener('mousedown', e => {
+    e.preventDefault();
+    _c.dragging = true;
+    _c.lastX = e.clientX; _c.lastY = e.clientY;
+    container.style.cursor = 'grabbing';
+  });
+  window.addEventListener('mousemove', e => {
+    if (!_c.dragging) return;
+    _c.x += e.clientX - _c.lastX;
+    _c.y += e.clientY - _c.lastY;
+    _c.lastX = e.clientX; _c.lastY = e.clientY;
+    _cropClamp(); _cropApply();
+  });
+  window.addEventListener('mouseup', () => {
+    _c.dragging = false;
+    container.style.cursor = 'grab';
+  });
+
+  // Wheel zoom
+  container.addEventListener('wheel', e => {
+    e.preventDefault();
+    const rect   = container.getBoundingClientRect();
+    const cx     = e.clientX - rect.left;
+    const cy     = e.clientY - rect.top;
+    _cropZoom(e.deltaY < 0 ? 1.12 : 0.9, cx, cy);
+  }, { passive: false });
+
+  // Touch
+  container.addEventListener('touchstart', e => {
+    e.preventDefault();
+    if (e.touches.length === 1) {
+      _c.dragging = true;
+      _c.lastX = e.touches[0].clientX; _c.lastY = e.touches[0].clientY;
+    } else if (e.touches.length === 2) {
+      _c.dragging = false;
+      _c.lastDist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+    }
+  }, { passive: false });
+
+  container.addEventListener('touchmove', e => {
+    e.preventDefault();
+    if (e.touches.length === 1 && _c.dragging) {
+      _c.x += e.touches[0].clientX - _c.lastX;
+      _c.y += e.touches[0].clientY - _c.lastY;
+      _c.lastX = e.touches[0].clientX; _c.lastY = e.touches[0].clientY;
+      _cropClamp(); _cropApply();
+    } else if (e.touches.length === 2) {
+      const dist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      const rect = container.getBoundingClientRect();
+      const cx   = ((e.touches[0].clientX + e.touches[1].clientX) / 2) - rect.left;
+      const cy   = ((e.touches[0].clientY + e.touches[1].clientY) / 2) - rect.top;
+      _cropZoom(dist / _c.lastDist, cx, cy);
+      _c.lastDist = dist;
+    }
+  }, { passive: false });
+
+  container.addEventListener('touchend', e => {
+    if (e.touches.length === 0) _c.dragging = false;
+  });
+
+  // Buttons
+  document.getElementById('cropZoomIn').addEventListener('click',  () => _cropZoom(1.15));
+  document.getElementById('cropZoomOut').addEventListener('click', () => _cropZoom(0.88));
+  document.getElementById('cropConfirmBtn').addEventListener('click', confirmCrop);
+  document.getElementById('cropCancelBtn').addEventListener('click',  cancelCrop);
+}
+
 // ===== HELPERS =====
 
 function showMatchError(msg) {
@@ -331,6 +495,8 @@ function escapeHtml(str) {
 
 // Auto-login from session
 window.addEventListener('load', async () => {
+  _setupCropper();
+
   const saved = sessionStorage.getItem('bgPwd');
   if (!saved) return;
 
